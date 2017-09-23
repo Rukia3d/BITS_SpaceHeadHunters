@@ -9,9 +9,9 @@ var ipc = electron.ipcMain;
 app.on("ready", function() {
 
 	var appWindow = new BrowserWindow({
-
-		width: 1024,
-		height: 768,
+		//Window size for the app
+		width: 950,
+		height: 750,
 		icon: path.join(__dirname, 'assets/icons/png/64x64.png'),
 		show: false
 	});
@@ -21,7 +21,7 @@ app.on("ready", function() {
 	appWindow.once("ready-to-show", function() {
 
 		// do we want to run it maximized?
-		appWindow.maximize();
+		// appWindow.maximize();
 		appWindow.show();
 
 	});
