@@ -1,0 +1,30 @@
+[
+	{ 
+		"type" : "space",
+		"number" : 14
+	},
+	{ 
+		"type" : "gate1",
+		"number" : 14
+	},
+	{ 
+		"type" : "gate2",
+		"number" : 9
+	},
+	{ 
+		"type" : "gate3",
+		"number" : 2
+	},
+	{ 
+		"type" : "pub",
+		"number" : 4
+	},
+	{ 
+		"type" : "cruiser",
+		"number" : 5
+	},
+	{ 
+		"type" : "lair",
+		"number" : 5
+	}
+]
