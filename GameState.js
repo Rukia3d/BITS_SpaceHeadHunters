@@ -18,6 +18,7 @@ class GameState {
 		this.placeShips();
 	}
 
+	// add however many players
 	addPlayers(numPlayers) {
 
 		for(var i = 0; i < numPlayers; ++i) {
@@ -26,6 +27,7 @@ class GameState {
 		}
 	}
 
+	// load the deck from json file. File contains the quantity of each card type
 	loadDeck() {
 
 		for(var i = 0; i < deckData.length; i++) {
@@ -37,6 +39,7 @@ class GameState {
 		}
 	}
 
+	// shuffle the deck
 	shuffle() {
 
 		for(var i = 0; i < this.deck.length; i++) {
@@ -55,6 +58,7 @@ class GameState {
 		}
 	}
 
+	// draw cards and place on the board at the appropriate coordinates
 	deal() {
 
 		this.board.push({ "type" : this.deck.pop(), "x" : 4, "y" : 2 });
@@ -69,16 +73,20 @@ class GameState {
 
 	}
 
+	// checks every card on the board and adds ships if required.
 	placeShips() {
 
 		this.ships.length = 0;
 
 		for(var i = 0; i < this.board.length; i++) {
 
+			// if the type is gate
 			if(this.board[i].type.substring(0, 4) == "gate") {
 
+				// number of ships is the last char
 				var numShips = parseInt(this.board[i].type.substring(4));
 
+				// add that many ships
 				for(var j = 0; j < numShips; ++j) {
 
 					this.ships.push({ "x" : this.board[i].x, "y" : this.board[i].y });
@@ -87,6 +95,7 @@ class GameState {
 		}
 	}
 
+	// checks one card and places ships similar to the above
 	placeShipsOnCard(x, y) {
 
 		if(this.cardAtTile(x, y).substring(0, 4) == "gate") {
@@ -100,6 +109,7 @@ class GameState {
 		}
 	}
 
+	// gives the player a card returns true on succes, false otherwise.
 	drawCard(player) {
 
 		if(this.players[player].currentCard || this.phase != "DRAW") {
@@ -113,20 +123,30 @@ class GameState {
 		}
 	}
 
+	// places a card at tile returns true on success.
 	placeCard(player, x, y) {
 
+		// if not on PLACE phase, or off the board, or there's a card there already...
 		if(x > 8 || x < 0 || y > 8 || y < 0 || this.cardAtTile(x, y) || this.phase != "PLACE") {
 
 			return false;
 		}
 
+		// to check if it's a good position (i.e. a side touching another card) go through each card on the board
 		for(var i = 0; i < this.board.length; i++) {
 
+			// the placement spot must be either one off the y position of another card, 
+			// or one off the x position of another card
 			if((Math.abs(this.board[i].x - x) == 1 && this.board[i].y == y) ||
 			   (Math.abs(this.board[i].y - y) == 1 && this.board[i].x == x)) {
 
+				// add the card to the board
 			   	this.board.push({ "type" : this.players[player].currentCard, "x" : x, "y" : y });
+				
+			   	// used up players card
 				this.players[player].currentCard = null;
+
+				// if we placed a gate card
 				this.placeShipsOnCard(x, y);
 
 				return true;
@@ -136,8 +156,14 @@ class GameState {
 		return false;
 	}
 
+	// returns true on success
 	placeLure(player, x, y) {
 
+		// must be LURE phase
+		// must have a card at tile
+		// card must not be pub
+		// card must have no ships
+		// card must not have another player's lure
 		if(this.cardAtTile(x, y) && this.cardAtTile(x, y) != "pub" && this.numShipsOnTile(x, y) == 0 && !this.lureOnTile(x, y) && this.phase == "LURE") {
 
 			this.players[player].lure = { "x" : x, "y" : y };
@@ -147,6 +173,7 @@ class GameState {
 		return false;
 	}
 
+	// obvious
 	lureOnTile(x, y) {
 
 		for(var i = 0; i < this.players.length; ++i) {
@@ -160,6 +187,7 @@ class GameState {
 		return false;
 	}
 
+	// returns card type or null
 	cardAtTile(x, y) {
 
 		for(var i = 0; i < this.board.length; i++) {
@@ -173,6 +201,7 @@ class GameState {
 		return null;
 	}
 
+	// obvious
 	numShipsOnTile(x, y) {
 
 		var shipCount = 0;
@@ -188,6 +217,7 @@ class GameState {
 		return shipCount;
 	}
 
+	// goes to the next phase.
 	nextPhase() {
 
 		if(this.phase == "DRAW") {
@@ -242,6 +272,7 @@ class GameState {
 		}
 	}
 
+	// takes lures off the board
 	resetLures() {
 		
 		for(var i = 0; i < this.players.length; ++i) {
@@ -250,6 +281,7 @@ class GameState {
 		}
 	}
 
+	// game is over when the deck is depleted
 	isGameOver() {
 
 		if(this.deck.length == 0) {
@@ -260,6 +292,9 @@ class GameState {
 		return false;
 	}
 
+	// takes ships off the tile
+	// problems with this for loop due to altering the array we're looping over
+	// should fix this up!
 	removeShipsFromTile(x, y) {
 
 		console.log(`removing all ships from ( ${x}, ${y} )`);
@@ -404,12 +439,14 @@ class GameState {
 		}
 	}
 
+
 	score() {
 
 		for(var i = 0; i < this.players.length; ++i) {
 
 			var ships = this.numShipsOnTile(this.players[i].lure.x, this.players[i].lure.y);
 			
+			// double poitns for a lair card
 			if(this.cardAtTile(this.players[i].lure.x, this.players[i].lure.y) == "lair") {
 
 				this.players[i].score += (ships * 2);
@@ -423,9 +460,26 @@ class GameState {
 
 	shipsFly() {
 
+		// steps
+		// 1 - get shipgroups i.e. the number and position of ships on a tile
+		// 2 - find lures in the x or y axis from each ship group position
+		// 3 - determine which of those 'axis lures' have a valid path i.e. no empty tiles between them
+		// 4 - from the remaining lures, find the closest one(s)/
+		// 5 - if there's only one lure, move to it but stop at pub if it's between them
+		// 6 - if there are multiple lures, find any cruiser lures that should break tie.
+		// 7 - if cruiser lures, find the ship amount for each cruiser lure i.e. if ships %(modulo) lures == 0
+		// 8 - check for pubs too
+		// 9 - if no cruiser lures, basically do the same as for them.
+
+		// could simplify this a bit I think if there's only one lure, then the ship count modulo% the num lures will
+		// still result in that lure gettign all ships. So there's an extra conditional that doesn't need to be in there.
+		// i.e. step 5 above
+
+
 		var shipGroups = new Array();
 		var newShipGroups = new Array();
 
+		// get the ship groups
 		for(var i = 0; i < this.board.length; ++i) {
 
 			var shipCount = this.numShipsOnTile(this.board[i].x, this.board[i].y);
@@ -448,6 +502,7 @@ class GameState {
 			var closestLureDistance = 9;
 			var numShipsPerLure = 0;
 
+			// determine lures on the x and y axis
 			for(var j = 0; j < this.players.length; ++j) {
 
 				if(this.players[j].lure.x == shipGroups[k].x) {
@@ -465,7 +520,10 @@ class GameState {
 
 				console.log(`Lure ${ii}: ${axisLures[ii].axis}-axis ( ${axisLures[ii].x}, ${axisLures[ii].y} )\n`);
 			}
-			
+
+			// determine lures with a valid path to them
+			// note that the for loop iterates backwards because we're altering array within the loop itself
+			// by removing elements which would result in skipping if we go forwards.
 			for(var l = axisLures.length - 1; l >= 0; --l) {
 				console.log(`Checking lure ${l}`);
 				if(axisLures[l].axis == "y" && !this.checkShipPathY(shipGroups[k].y, axisLures[l].y, axisLures[l].x)) {
@@ -484,6 +542,7 @@ class GameState {
 				console.log(`Lure ${ii}: ${axisLures[ii].axis}-axis ( ${axisLures[ii].x}, ${axisLures[ii].y} )\n`);
 			}
 
+			// find out the closest lures
 			for(var n = 0; n < axisLures.length; ++n) {
 
 				if(axisLures[n].axis == "x") {
@@ -499,6 +558,7 @@ class GameState {
 			closestLureDistance = Math.min.apply(Math, axisLures.map(function(o) { return o.distance; }))
 			console.log(`Closest Lure Distance: ${closestLureDistance}`);
 
+			// again iterating backwards to avoid skipping elements.
 			for(var n = axisLures.length - 1; n >= 0; --n) {
 
 				if(closestLureDistance < axisLures[n].distance) {
@@ -513,6 +573,8 @@ class GameState {
 				console.log(`Lure ${ii}: ${axisLures[ii].axis}-axis ( ${axisLures[ii].x}, ${axisLures[ii].y} )\n`);
 			}
 
+
+			// one valid lure
 			if(axisLures.length == 1) {
 
 				numShipsPerLure = shipGroups[k].num;
@@ -536,8 +598,11 @@ class GameState {
 					newShipGroups.push({ "num" : numShipsPerLure, "x" : axisLures[0].x,  "y" : axisLures[0].y });
 				}
 			}
+
+			// multiple valid lures
 			else if(axisLures.length > 1) {
 
+				// find cruiser lures
 				for(var t = 0; t < axisLures.length; ++t) {
 
 					if(this.cardAtTile(axisLures[t].x, axisLures[t].y) == "cruiser") {
@@ -552,7 +617,7 @@ class GameState {
 					console.log(`Lure ${ii}: ${cruiserLures[ii].axis}-axis ( ${cruiserLures[ii].x}, ${cruiserLures[ii].y} )\n`);
 				}
 
-
+				// if we have cruiser lures
 				if(cruiserLures.length > 0 && shipGroups[k].num % cruiserLures.length == 0) {
 
 					numShipsPerLure = shipGroups[k].num / cruiserLures.length;
@@ -578,6 +643,8 @@ class GameState {
 						}
 					}
 				}
+
+				// if just normal lures
 				else if(cruiserLures.length == 0 && shipGroups[k].num % axisLures.length == 0) {
 
 					numShipsPerLure = shipGroups[k].num / axisLures.length;
@@ -612,17 +679,21 @@ class GameState {
 						}
 					}
 				}
+				// keep the ships were they were i.e. they weren't evenly divisible
 				else {
 					newShipGroups.push({ "num" : shipGroups[k].num, "x" : shipGroups[k].x,  "y" : shipGroups[k].y });
 				}
 			}
+			// there were no valid lures, so don't move the ships
 			else {
 				newShipGroups.push({ "num" : shipGroups[k].num, "x" : shipGroups[k].x,  "y" : shipGroups[k].y });
 			}
 		}
-
+		// newShipGroups contains the entire boards' new shipGroups even if they haven't moved
+		// so get rid of the old ships...
 		this.ships.length = 0;
 
+		// ... and add the new ships.
 		for(var i = 0; i < newShipGroups.length; ++i) {
 
 			for(var k = 0;  k < newShipGroups[i].num; ++k) {
@@ -632,6 +703,7 @@ class GameState {
 		}
 	}
 
+	// check from x1 to x2 for pubs
 	getPubInPathX(xStart, xEnd, y) {
 		console.log(`Checking pubs in X axis...`);
 		if(xStart > xEnd) {
@@ -662,6 +734,7 @@ class GameState {
 		return null;
 	}
 
+	// check from y1 to y2 for pubs
 	getPubInPathY(yStart, yEnd, x) {
 		console.log(`Checking pubs in Y axis...`);
 		if(yStart > yEnd) {
@@ -692,6 +765,7 @@ class GameState {
 		return null;
 	}
 
+	// check from x1 to x2 for gaps
 	checkShipPathX(xStart, xEnd, y) {
 		console.log(`Checking path in X axis...`);
 		if(xStart > xEnd) {
@@ -718,6 +792,7 @@ class GameState {
 		return true;
 	}
 
+	// check from y1 to y2 for gaps
 	checkShipPathY(yStart, yEnd, x) {
 		console.log(`Checking path in Y axis...`);
 		if(yStart > yEnd) {
