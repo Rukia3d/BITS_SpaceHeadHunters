@@ -7,11 +7,12 @@ var BrowserWindow = electron.BrowserWindow;
 var app = electron.app;
 var ipc = electron.ipcMain;
 
+let gso = {};
 
 app.on("ready", function() {
 
 	// new game state with 2 players
-	var gso = new GameState(2);
+	gso = new GameState(2);
 
 	var appWindow = new BrowserWindow({
 
@@ -82,6 +83,19 @@ app.on("ready", function() {
 			event.sender.send("GSO", gso);
 		}
 	});
+
+	// reset
+	ipc.on('RESET', function(event, {}) {
+
+		console.log("\n\n****************************");
+		console.log("***** GAME RESET STATE *****");
+		console.log("****************************\n\n");
+
+		gso = new GameState(2);
+		event.sender.send("GSO", gso);
+
+	});
+
 });
 
 app.on("window-all-closed", app.quit);
