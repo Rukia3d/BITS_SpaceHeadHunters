@@ -75,15 +75,15 @@ class GameState {
 	// draw cards and place on the board at the appropriate coordinates
 	deal() {
 
-		this.board.push({ "type" : this.deck.drawCard(), "x" : 4, "y" : 2 });
-		this.board.push({ "type" : this.deck.drawCard(), "x" : 3, "y" : 3 });
-		this.board.push({ "type" : this.deck.drawCard(), "x" : 5, "y" : 3 });
-		this.board.push({ "type" : this.deck.drawCard(), "x" : 2, "y" : 4 });
-		this.board.push({ "type" : this.deck.drawCard(), "x" : 4, "y" : 4 });
-		this.board.push({ "type" : this.deck.drawCard(), "x" : 6, "y" : 4 });
-		this.board.push({ "type" : this.deck.drawCard(), "x" : 3, "y" : 5 });
-		this.board.push({ "type" : this.deck.drawCard(), "x" : 5, "y" : 5 });
-		this.board.push({ "type" : this.deck.drawCard(), "x" : 4, "y" : 6 });
+		this.board.push({ "type" : this.deck.drawCard().type, "x" : 4, "y" : 2 });
+		this.board.push({ "type" : this.deck.drawCard().type, "x" : 3, "y" : 3 });
+		this.board.push({ "type" : this.deck.drawCard().type, "x" : 5, "y" : 3 });
+		this.board.push({ "type" : this.deck.drawCard().type, "x" : 2, "y" : 4 });
+		this.board.push({ "type" : this.deck.drawCard().type, "x" : 4, "y" : 4 });
+		this.board.push({ "type" : this.deck.drawCard().type, "x" : 6, "y" : 4 });
+		this.board.push({ "type" : this.deck.drawCard().type, "x" : 3, "y" : 5 });
+		this.board.push({ "type" : this.deck.drawCard().type, "x" : 5, "y" : 5 });
+		this.board.push({ "type" : this.deck.drawCard().type, "x" : 4, "y" : 6 });
 
 	}
 
@@ -132,7 +132,7 @@ class GameState {
 		} 
 		else {
 
-			this.players[player].currentCard = this.deck.drawCard();
+			this.players[player].currentCard = this.deck.drawCard().type;
 			return true;
 		}
 	}

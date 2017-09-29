@@ -1,3 +1,5 @@
+var Card = require("./Card.js");
+
 class Deck {
 
 	constructor(deckData) {
@@ -9,7 +11,7 @@ class Deck {
 	loadCards(deckData) {
 		for(var card in deckData) {
 			for(var i = 0; i < deckData[card].number; i++) {
-				this.cards.push(deckData[card].type);
+				this.cards.push(new Card(deckData[card].type));
 			}
 		}
 	}
@@ -30,7 +32,12 @@ class Deck {
 
 	// return the deck for the game state object
 	getDeck() {
-		return this.cards;
+		// need to return as per the spec
+		var ret = new Array(); 
+		this.cards.forEach(function(card, index, array) {
+			ret.push(card.type);
+		});
+		return ret;
 	}
 
 	// reset the deck
