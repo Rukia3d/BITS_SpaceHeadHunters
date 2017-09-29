@@ -28,7 +28,7 @@ app.on("ready", function() {
 
 		appWindow.show();
 		// send the initial game state
-		appWindow.webContents.send("GSO", gso);
+		appWindow.webContents.send("GSO", gso.getGameState());
 	});
 
 	// draw
@@ -40,7 +40,7 @@ app.on("ready", function() {
 			// go to place
 			gso.nextPhase();
 		}
-		event.sender.send("GSO", gso);
+		event.sender.send("GSO", gso.getGameState());
 	});
 
 	// place
@@ -52,7 +52,7 @@ app.on("ready", function() {
 			// go to lure
 			gso.nextPhase();
 		}
-		event.sender.send("GSO", gso);
+		event.sender.send("GSO", gso.getGameState());
 	});
 
 	// lure
@@ -65,22 +65,22 @@ app.on("ready", function() {
 			gso.nextPhase();
 		}
 
-		event.sender.send("GSO", gso);
+		event.sender.send("GSO", gso.getGameState());
 
 		// if the lure was good, and we were on the last player, we should be on SHIPSFLY
 		if(gso.phase == "SHIPSFLY") {
 			
 			// fly the ships and go to SCORING
 			gso.nextPhase();
-			event.sender.send("GSO", gso);
+			event.sender.send("GSO", gso.getGameState());
 
 			// Score and go to SHIPSFLEE
 			gso.nextPhase();
-			event.sender.send("GSO", gso);
+			event.sender.send("GSO", gso.getGameState());
 
 			// Flee and either END, or go back to DRAW
 			gso.nextPhase();
-			event.sender.send("GSO", gso);
+			event.sender.send("GSO", gso.getGameState());
 		}
 	});
 
@@ -92,7 +92,7 @@ app.on("ready", function() {
 		console.log("****************************\n\n");
 
 		gso = new GameState(2);
-		event.sender.send("GSO", gso);
+		event.sender.send("GSO", gso.getGameState());
 
 	});
 
