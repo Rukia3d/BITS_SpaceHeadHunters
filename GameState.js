@@ -1,10 +1,11 @@
 var deckData = require("./deck.json"); // deck json
+var Deck = require("./Deck.js"); // deck class
 
 class GameState {
 
 	constructor(numPlayers) {
 
-		this.deck = new Array();
+		this.deck = new Deck(deckData);
 		this.board = new Array();
 		this.ships = new Array();
 		this.players = new Array();
@@ -12,10 +13,21 @@ class GameState {
 		this.player = 0;
 
 		this.addPlayers(numPlayers);
-		this.loadDeck();
-		this.shuffle();
+		this.deck.shuffle();
 		this.deal();
 		this.placeShips();
+	}
+
+	getGameState() {
+
+		return {
+		"deck" : this.deck.getDeck(), 
+		"board" : this.board, 
+		"ships" : this.ships, 
+		"players" : this.players, 
+		"phase" : this.phase,
+		"player" : this.player
+		};
 	}
 
 	// add however many players
@@ -27,6 +39,7 @@ class GameState {
 		}
 	}
 
+	/* Deck class doing this
 	// load the deck from json file. File contains the quantity of each card type
 	loadDeck() {
 
@@ -57,19 +70,20 @@ class GameState {
 			this.deck[randomIndex] = card;
 		}
 	}
+	*/
 
 	// draw cards and place on the board at the appropriate coordinates
 	deal() {
 
-		this.board.push({ "type" : this.deck.pop(), "x" : 4, "y" : 2 });
-		this.board.push({ "type" : this.deck.pop(), "x" : 3, "y" : 3 });
-		this.board.push({ "type" : this.deck.pop(), "x" : 5, "y" : 3 });
-		this.board.push({ "type" : this.deck.pop(), "x" : 2, "y" : 4 });
-		this.board.push({ "type" : this.deck.pop(), "x" : 4, "y" : 4 });
-		this.board.push({ "type" : this.deck.pop(), "x" : 6, "y" : 4 });
-		this.board.push({ "type" : this.deck.pop(), "x" : 3, "y" : 5 });
-		this.board.push({ "type" : this.deck.pop(), "x" : 5, "y" : 5 });
-		this.board.push({ "type" : this.deck.pop(), "x" : 4, "y" : 6 });
+		this.board.push({ "type" : this.deck.drawCard(), "x" : 4, "y" : 2 });
+		this.board.push({ "type" : this.deck.drawCard(), "x" : 3, "y" : 3 });
+		this.board.push({ "type" : this.deck.drawCard(), "x" : 5, "y" : 3 });
+		this.board.push({ "type" : this.deck.drawCard(), "x" : 2, "y" : 4 });
+		this.board.push({ "type" : this.deck.drawCard(), "x" : 4, "y" : 4 });
+		this.board.push({ "type" : this.deck.drawCard(), "x" : 6, "y" : 4 });
+		this.board.push({ "type" : this.deck.drawCard(), "x" : 3, "y" : 5 });
+		this.board.push({ "type" : this.deck.drawCard(), "x" : 5, "y" : 5 });
+		this.board.push({ "type" : this.deck.drawCard(), "x" : 4, "y" : 6 });
 
 	}
 
@@ -118,7 +132,7 @@ class GameState {
 		} 
 		else {
 
-			this.players[player].currentCard = this.deck.pop();
+			this.players[player].currentCard = this.deck.drawCard();
 			return true;
 		}
 	}
