@@ -73,6 +73,36 @@ body {
 	background-color: white;
 }
 
+.player h3{
+	text-align: center;
+	margin: 0 auto;
+}
+
+.player .avatar{
+	height: 105px;
+	width: 135px;
+	background-color: green;
+}
+
+.player .statusline{
+	width: 135px;
+	height: 20px;
+	background-color: red;
+	position: relative;
+	margin-top: -20px;
+}
+
+.player .scorearea{
+	width: 135px;
+	height: 65px;
+	background-color: blue;
+}
+
+.player .actionarea{
+	width: 135px;
+	height: 90px;
+	background-color: yellow;
+}
 
 /* BOARD */
 #board{
