@@ -1,18 +1,21 @@
 class Board {
 
-    constructor() {
+    constructor(deck) {
 
         this.tiles = new Array();
         this.ships = new Array();
 
-    }
+	    this.initBoard(deck);
+	}
     
     /* PUBLIC INTERFACE */
     placeCard(card, x, y) {
 
-        if (this.getTile(x, y))
+        // if tile exists, return false
+        if (this.getTile(x, y) !== null)
             return false;
 
+        console.log("derp");
         this.tiles.forEach(function(i) {
             
             // the placement spot must be either one off the y position of another card, 
@@ -611,6 +614,22 @@ class Board {
 
         return true;
     }
+
+    initBoard(deck) {
+
+        // prime the board, so placeCard() logic works
+        this.tiles.push({ "type": deck.drawCard(), "x":4, "y": 2 });
+        this.tiles.push({ "type": deck.drawCard(), "x":3, "y": 3 });
+        this.tiles.push({ "type": deck.drawCard(), "x":5, "y": 3 });
+        this.tiles.push({ "type": deck.drawCard(), "x":2, "y": 4 });
+        this.tiles.push({ "type": deck.drawCard(), "x":4, "y": 4 });
+        this.tiles.push({ "type": deck.drawCard(), "x":6, "y": 4 });
+        this.tiles.push({ "type": deck.drawCard(), "x":3, "y": 5 });
+        this.tiles.push({ "type": deck.drawCard(), "x":5, "y": 5 });
+        this.tiles.push({ "type": deck.drawCard(), "x":4, "y": 6 });
+        
+    }
+
 }
 
 module.exports = Board;

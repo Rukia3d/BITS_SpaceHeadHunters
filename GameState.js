@@ -7,7 +7,7 @@ class GameState {
 	constructor(numPlayers) {
 
 		this.deck = new Deck(deckData);
-		this.board = new Board;
+		this.board = new Board(this.deck);
 		this.players = new Array();
 		this.phase = "DRAW";
 		this.player = 0;
@@ -15,7 +15,6 @@ class GameState {
 		// init helper methods
 		this.addPlayers(numPlayers);
 		this.deck.shuffle();
-		this.deal();
 
 	}
 
@@ -48,7 +47,7 @@ class GameState {
 		
 		// if tile is successfully placed, return true
 		if (this.phase === "PLACE" && 
-			this.board.placeCard(this.players[player].currentCard, x, y)) {
+			this.board.placeCard(this.players[player].currentCard, x, y)) { // broken here...
 
 			this.players[player].currentCard = null;
 			return true;
@@ -141,53 +140,38 @@ class GameState {
 		
 	}
 
-	// draw cards and place on the board at the appropriate coordinates
-	deal() {
+	// takes lures off the board
+	resetLures() {	
 
-		this.board.placeCard(this.deck.drawCard(), 4, 2);
-		this.board.placeCard(this.deck.drawCard(), 3, 3);
-		this.board.placeCard(this.deck.drawCard(), 5, 3);
-		this.board.placeCard(this.deck.drawCard(), 2, 4);
-		this.board.placeCard(this.deck.drawCard(), 4, 4);
-		this.board.placeCard(this.deck.drawCard(), 6, 4);
-		this.board.placeCard(this.deck.drawCard(), 3, 5);
-		this.board.placeCard(this.deck.drawCard(), 5, 5);
-		this.board.placeCard(this.deck.drawCard(), 4, 6);
+		for(var i = 0; i < this.players.length; ++i)
+			this.players[i].lure = null;
 
 	}
 
-		// takes lures off the board
-		resetLures() {	
+	// game is over when the deck is depleted
+	isGameOver() {
 
-			for(var i = 0; i < this.players.length; ++i)
-				this.players[i].lure = null;
+		if(this.deck.length == 0) 
+			return true;
 
-        }
-    
-        // game is over when the deck is depleted
-        isGameOver() {
-    
-            if(this.deck.length == 0) 
-                return true;
-    
-			return false;
-			
-		}
+		return false;
 		
-		score() {
+	}
+	
+	score() {
+		
+		this.players.forEach(function(i) {
 			
-			this.players.forEach(function(i) {
-				
-				let ships = this.board.numShipsonTile(i.lure.x, i.lure.y);
+			let ships = this.board.numShipsonTile(i.lure.x, i.lure.y);
 
-				if (this.board.getTile(i.lure.x, i.lure.y).type === "lair") 
-					this.players[i].score += (ships * 2);
-				else
-					this.players[i].score += ships;
+			if (this.board.getTile(i.lure.x, i.lure.y).type === "lair") 
+				this.players[i].score += (ships * 2);
+			else
+				this.players[i].score += ships;
 
-			}, this);
+		}, this);
 
-		}
+	}
 
 }
 
