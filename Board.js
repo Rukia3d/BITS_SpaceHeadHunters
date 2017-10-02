@@ -5,7 +5,8 @@ class Board {
         this.tiles = new Array();
         this.ships = new Array();
 
-	    this.initBoard(deck);
+        this.initBoard(deck);
+
 	}
     
     /* PUBLIC INTERFACE */
@@ -15,19 +16,18 @@ class Board {
         if (this.getTile(x, y) !== null)
             return false;
 
-        console.log("derp");
         this.tiles.forEach(function(i) {
-            
+
             // the placement spot must be either one off the y position of another card, 
             // or one off the x position of another card
-            if (Math.abs(i.x - x) == 1 && (i.y == y) || Math.abs(i.y - y) == 1 && (i.x == x)) {
+            if ((Math.abs(i.x - x) == 1 && (i.y == y)) || 
+                (Math.abs(i.y - y) == 1 && (i.x == x))) {
 
                 // add the card to the board
                 this.tiles.push({ "type" : card, "x" : x, "y" : y });
 
-                // if we placed a gate card -> add a check for a gate card...?
-                //this.placeShipsOnCard(x, y);
-
+                this.placeShip(x, y);
+                
                 return true;
 
             }
@@ -54,8 +54,8 @@ class Board {
     
     placeShip(x, y) {
 
-        tiles.forEach(function(i) {
-            if (i.substring(0, 4) === "gate") {
+        this.tiles.forEach(function(i) {
+            if (i.type === "gate") {
 
                 var numShips = parseInt(this.getTile(x, y).substring(4));
                 
@@ -77,11 +77,14 @@ class Board {
 
     getTile(x, y) {
 
-        this.tiles.forEach(function(i) {
-            if (i.x === x && i.y === y) 
-                return i;
-        }, this);
+        for (let j = 0; j < this.tiles.length; ++j) {
 
+            if (this.tiles[j].x === x && this.tiles[j].y === y) {
+                return this.tiles[j];
+            }
+
+        }
+        
         return null;
 
     }
@@ -618,6 +621,7 @@ class Board {
     initBoard(deck) {
 
         // prime the board, so placeCard() logic works
+
         this.tiles.push({ "type": deck.drawCard(), "x":4, "y": 2 });
         this.tiles.push({ "type": deck.drawCard(), "x":3, "y": 3 });
         this.tiles.push({ "type": deck.drawCard(), "x":5, "y": 3 });

@@ -7,15 +7,13 @@ class GameState {
 	constructor(numPlayers) {
 
 		this.deck = new Deck(deckData);
+		this.deck.shuffle();
 		this.board = new Board(this.deck);
 		this.players = new Array();
 		this.phase = "DRAW";
 		this.player = 0;
-
-		// init helper methods
 		this.addPlayers(numPlayers);
-		this.deck.shuffle();
-
+		
 	}
 
 	/* PUBLIC INTERFACE */
@@ -44,10 +42,19 @@ class GameState {
 
 	// places a card at tile returns true on success.
 	placeCard(player, x, y) {
-		
+
+		if (this.phase === "PLACE") 
+			if (this.board.placeCard(this.players[player].currentCard, x, y)) {
+				this.players[player].currentCard = null;
+				return true;
+			}
+
+		return false;
+
+		/*
 		// if tile is successfully placed, return true
 		if (this.phase === "PLACE" && 
-			this.board.placeCard(this.players[player].currentCard, x, y)) { // broken here...
+			this.board.placeCard(this.players[player].currentCard, x, y)) {
 
 			this.players[player].currentCard = null;
 			return true;
@@ -55,7 +62,7 @@ class GameState {
 		}
 
 		return false;
-		
+		*/
 	}
 
 	// returns true on success

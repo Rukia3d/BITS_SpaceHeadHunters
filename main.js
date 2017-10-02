@@ -34,8 +34,6 @@ app.on("ready", function() {
 	// draw
 	ipc.on('DRAW', function(event, data) {
 
-		console.log("...draw called");
-
 		// if the draw was good
 		if(gso.drawCard(data)) {
 
@@ -48,7 +46,6 @@ app.on("ready", function() {
 	// place
 	ipc.on("PLACE", function(event, data) {
 
-		console.log("place called");
 		// if the place was good
 		if(gso.placeCard(data.player, data.x, data.y)) {
 			
