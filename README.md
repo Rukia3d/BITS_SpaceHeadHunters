@@ -1,9 +1,6 @@
 # BITS_SpaceHeadHunters
 A study project for RMIT
 
-##Introduction
-Checking out socket.io networking. The game has a very quick and dirty network play mode.
-
 ##How to run
 - first <b>npm install</b>
 - then run server with <b>node server.js</b>
@@ -11,7 +8,10 @@ Checking out socket.io networking. The game has a very quick and dirty network p
 - then run another client with <b>electron .</b>
 - play with the two clients.
 
-##How it Works
+
+##Networking-test
+Checking out socket.io networking. The game has a very quick and dirty network play mode.
+
 We should put a server.js or similar file on a web server somewhere.
 main.js will communicate with this web server, mostly to send game state objects back and forth between all clients.
 The back end should also enforce player turns and not allow a player to take the turn of another. Some simple networked and player vars have been added the GameState to achieve this.
