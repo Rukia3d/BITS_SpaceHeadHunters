@@ -1,7 +1,7 @@
 # BITS_SpaceHeadHunters
 A study project for RMIT
 
-##How to run
+## How to run
 - first <b>npm install</b>
 - then run server with <b>node server.js</b>
 - then run client with <b>electron .</b>
@@ -9,7 +9,7 @@ A study project for RMIT
 - play with the two clients.
 
 
-##Networking-test
+## Networking-test
 Checking out socket.io networking. The game has a very quick and dirty network play mode.
 
 We should put a server.js or similar file on a web server somewhere.
