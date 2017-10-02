@@ -2,7 +2,7 @@ var deckData = require("./deck.json"); // deck json
 
 class GameState {
 
-	constructor(numPlayers) {
+	constructor(numPlayers, networked, playerNumber) {
 
 		this.deck = new Array();
 		this.board = new Array();
@@ -16,6 +16,36 @@ class GameState {
 		this.shuffle();
 		this.deal();
 		this.placeShips();
+		this.networked = networked; // bool
+		this.playerNumber = playerNumber;
+	}
+
+	checkNetworkTurn() {
+		if(this.networked && this.player == this.playerNumber) {
+			return true;
+		}
+		else if(!this.networked) return true;
+		else return false;
+	}
+
+	setGameState(gso) {
+		this.deck = gso.deck;
+		this.board = gso.board;
+		this.ships = gso.ships;
+		this.players = gso.players;
+		this.phase = gso.phase;
+		this.player = gso.player;
+	}
+
+	getGameState() {
+		return {
+			"deck" : this.deck,
+			"board" : this.board,
+			"ships" : this.ships,
+			"players" : this.players,
+			"phase" : this.phase,
+			"player": this.player
+		};
 	}
 
 	// add however many players
@@ -112,6 +142,10 @@ class GameState {
 	// gives the player a card returns true on succes, false otherwise.
 	drawCard(player) {
 
+		if(!this.checkNetworkTurn()) {
+			return false;
+		}
+
 		if(this.players[player].currentCard || this.phase != "DRAW") {
 
 			return false;
@@ -125,6 +159,10 @@ class GameState {
 
 	// places a card at tile returns true on success.
 	placeCard(player, x, y) {
+
+		if(!this.checkNetworkTurn()) {
+			return false;
+		}
 
 		// if not on PLACE phase, or off the board, or there's a card there already...
 		if(x > 8 || x < 0 || y > 8 || y < 0 || this.cardAtTile(x, y) || this.phase != "PLACE") {
@@ -158,6 +196,10 @@ class GameState {
 
 	// returns true on success
 	placeLure(player, x, y) {
+
+		if(!this.checkNetworkTurn()) {
+			return false;
+		}
 
 		// must be LURE phase
 		// must have a card at tile
