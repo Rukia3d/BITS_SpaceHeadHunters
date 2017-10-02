@@ -26,9 +26,11 @@ socket.on("disconnect", function() {
 });
 
 socket.on("playerNumber", function(data) {
+
 	playerNumber = data;
 	console.log(`I am player ${data}`);
 	gso = new GameState(2, networked, playerNumber);
+
 	if(playerNumber == 0) {
 		socket.emit("GSO", gso.getGameState());
 	}
@@ -82,7 +84,6 @@ app.on("ready", function() {
 
 		// if the draw was good
 		if(gso.drawCard(data)) {
-
 			// go to place
 			gso.nextPhase();
 			socket.emit("GSO", gso.getGameState());
