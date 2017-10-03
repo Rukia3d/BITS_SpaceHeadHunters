@@ -51,6 +51,7 @@ app.on("ready", function() {
 			
 			// go to lure
 			gso.nextPhase();
+			
 		}
 		event.sender.send("GSO", gso.getGameState());
 	});

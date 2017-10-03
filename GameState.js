@@ -45,24 +45,14 @@ class GameState {
 
 		if (this.phase === "PLACE") 
 			if (this.board.placeCard(this.players[player].currentCard, x, y)) {
+				
 				this.players[player].currentCard = null;
 				return true;
+
 			}
 
 		return false;
 
-		/*
-		// if tile is successfully placed, return true
-		if (this.phase === "PLACE" && 
-			this.board.placeCard(this.players[player].currentCard, x, y)) {
-
-			this.players[player].currentCard = null;
-			return true;
-
-		}
-
-		return false;
-		*/
 	}
 
 	// returns true on success
@@ -169,7 +159,7 @@ class GameState {
 		
 		this.players.forEach(function(i) {
 			
-			let ships = this.board.numShipsonTile(i.lure.x, i.lure.y);
+			let ships = this.board.numShipsOnTile(i.lure.x, i.lure.y);
 
 			if (this.board.getTile(i.lure.x, i.lure.y).type === "lair") 
 				this.players[i].score += (ships * 2);

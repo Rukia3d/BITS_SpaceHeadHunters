@@ -10,29 +10,25 @@ class Board {
 	}
     
     /* PUBLIC INTERFACE */
-    placeCard(card, x, y) {
+    placeCard(crd, x, y) {
 
         // if tile exists, return false
         if (this.getTile(x, y) !== null)
             return false;
 
-        this.tiles.forEach(function(i) {
+        for (let j = 0; j < this.tiles.length; ++j) {
 
-            // the placement spot must be either one off the y position of another card, 
-            // or one off the x position of another card
-            if ((Math.abs(i.x - x) == 1 && (i.y == y)) || 
-                (Math.abs(i.y - y) == 1 && (i.x == x))) {
-
-                // add the card to the board
-                this.tiles.push({ "type" : card, "x" : x, "y" : y });
-
-                this.placeShip(x, y);
+            if((Math.abs(this.tiles[j].x - x) === 1 && this.tiles[j].y == y) ||
+               (Math.abs(this.tiles[j].y - y) == 1 && this.tiles[j].x == x)) {
                 
-                return true;
+                    this.tiles.push({"type": crd, "x": x, "y": y});
+                    this.placeShip(x, y);
 
-            }
+                    return true;
 
-        }, this);
+                }
+
+        }
 
         return false;
     }
