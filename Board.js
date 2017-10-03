@@ -6,6 +6,7 @@ class Board {
         this.ships = new Array();
 
         this.initBoard(deck);
+        this.initShips();
 
 	}
     
@@ -628,6 +629,31 @@ class Board {
         this.tiles.push({ "type": deck.drawCard(), "x":5, "y": 5 });
         this.tiles.push({ "type": deck.drawCard(), "x":4, "y": 6 });
         
+    }
+
+    initShips() {
+
+        this.ships.length = 0;
+
+        console.log(this.tiles);
+
+        this.tiles.forEach(function(i) {
+        
+            if (i.type.type.substring(0, 4) === "gate") {
+
+                var numShips = parseInt(i.type.type.substring(4));
+                
+                for(var j = 0; j < numShips; ++j) {
+
+                    this.ships.push({ "x" : i.x, "y" : i.y });
+                }
+
+            }
+
+        }, this);
+
+        console.log(this.ships);
+
     }
 
 }
