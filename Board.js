@@ -635,8 +635,6 @@ class Board {
 
         this.ships.length = 0;
 
-        console.log(this.tiles);
-
         this.tiles.forEach(function(i) {
         
             if (i.type.type.substring(0, 4) === "gate") {
@@ -651,8 +649,6 @@ class Board {
             }
 
         }, this);
-
-        console.log(this.ships);
 
     }
 
