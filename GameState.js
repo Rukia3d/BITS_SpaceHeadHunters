@@ -57,23 +57,14 @@ class GameState {
 
 	// returns true on success
 	placeLure(player, x, y) {
-		
-		// first check if player has a lure, and no lure exist at the
-		// location
-		this.players.forEach(function(i) {
 
-			if (i.lure && i.lure.x == x && i.lure.y == y)
-				return false;
-			
-		}, this);
+		let currPlayer = this.players[player];
 
+		if (this.phase !== "LURE")
+			return false;
 
-		if (this.phase === "LURE" && this.board.placeLure(x, y)) {
-
-			this.players[player].lure = { "x" : x, "y" : y };
+		if (this.board.placeLure(currPlayer, x, y))
 			return true;
-
-		}
 
 		return false;
 		
@@ -162,9 +153,9 @@ class GameState {
 			let ships = this.board.numShipsOnTile(i.lure.x, i.lure.y);
 
 			if (this.board.getTile(i.lure.x, i.lure.y).type === "lair") 
-				this.players[i].score += (ships * 2);
+				i.score += (ships * 2);
 			else
-				this.players[i].score += ships;
+				i.score += ships;
 
 		}, this);
 

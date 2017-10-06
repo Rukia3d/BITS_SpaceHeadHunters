@@ -34,15 +34,17 @@ class Board {
         return false;
     }
     
-    placeLure(x, y) {
+    placeLure(player, x, y) {
     
         // must have a card at tile
         // card must not be pub
         // card must have no ships
-        if(this.getTile(x, y) && this.getTile(x, y).type != "pub" && 
-           this.numShipsOnTile(x, y) == 0) {
+        if (this.getTile(x, y) && this.getTile(x, y).type !== "pub" &&
+            this.numShipsOnTile(x, y) === 0) { 
 
+            player.lure = {"x": x, "y": y};
             return true;
+
         }
 
         return false;
@@ -299,7 +301,7 @@ class Board {
             var numShipsPerLure = 0;
 
             // determine lures on the x and y axis
-            for(var j = 0; j < this.players.length; ++j) {
+            for(var j = 0; j < players.length; ++j) {
 
                 if(players[j].lure.x == shipGroups[k].x) {
 
@@ -401,7 +403,7 @@ class Board {
                 // find cruiser lures
                 for(var t = 0; t < axisLures.length; ++t) {
 
-                    if(this.cardAtTile(axisLures[t].x, axisLures[t].y) == "cruiser") {
+                    if(this.getTile(axisLures[t].x, axisLures[t].y) == "cruiser") {
 
                         cruiserLures.push({ "axis" : axisLures[t].axis, "x" : axisLures[t].x, "y" : axisLures[t].y });
                     }
@@ -595,7 +597,7 @@ class Board {
 
             for(var i = yStart - 1; i > yEnd; --i) {
 
-                if(!this.cardAtTile(x, i)) {
+                if(!this.getTile(x, i)) {
                     console.log(`No card @ ( ${x}, ${i} )`);
                     return false;
                 }
@@ -605,7 +607,7 @@ class Board {
 
             for(var i = yStart + 1; i < yEnd; ++i) {
 
-                if(!this.cardAtTile(x, i)) {
+                if(!this.getTile(x, i)) {
                     console.log(`No card @ ( ${x}, ${i} )`);
                     return false;
                 }
@@ -619,15 +621,15 @@ class Board {
 
         // prime the board, so placeCard() logic works
 
-        this.tiles.push({ "type": deck.drawCard(), "x":4, "y": 2 });
-        this.tiles.push({ "type": deck.drawCard(), "x":3, "y": 3 });
-        this.tiles.push({ "type": deck.drawCard(), "x":5, "y": 3 });
-        this.tiles.push({ "type": deck.drawCard(), "x":2, "y": 4 });
-        this.tiles.push({ "type": deck.drawCard(), "x":4, "y": 4 });
-        this.tiles.push({ "type": deck.drawCard(), "x":6, "y": 4 });
-        this.tiles.push({ "type": deck.drawCard(), "x":3, "y": 5 });
-        this.tiles.push({ "type": deck.drawCard(), "x":5, "y": 5 });
-        this.tiles.push({ "type": deck.drawCard(), "x":4, "y": 6 });
+        this.tiles.push({ "type": deck.drawCard().type, "x":4, "y": 2 });
+        this.tiles.push({ "type": deck.drawCard().type, "x":3, "y": 3 });
+        this.tiles.push({ "type": deck.drawCard().type, "x":5, "y": 3 });
+        this.tiles.push({ "type": deck.drawCard().type, "x":2, "y": 4 });
+        this.tiles.push({ "type": deck.drawCard().type, "x":4, "y": 4 });
+        this.tiles.push({ "type": deck.drawCard().type, "x":6, "y": 4 });
+        this.tiles.push({ "type": deck.drawCard().type, "x":3, "y": 5 });
+        this.tiles.push({ "type": deck.drawCard().type, "x":5, "y": 5 });
+        this.tiles.push({ "type": deck.drawCard().type, "x":4, "y": 6 });
         
     }
 
@@ -637,9 +639,9 @@ class Board {
 
         this.tiles.forEach(function(i) {
         
-            if (i.type.type.substring(0, 4) === "gate") {
+            if (i.type.substring(0, 4) === "gate") {
 
-                var numShips = parseInt(i.type.type.substring(4));
+                var numShips = parseInt(i.type.substring(4));
                 
                 for(var j = 0; j < numShips; ++j) {
 
