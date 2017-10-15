@@ -105,6 +105,10 @@ body {
 	background-color: yellow;
 }
 
+.player .greybox{
+	background-color: grey;
+}
+
 /* BOARD */
 #board{
 	position: absolute;
