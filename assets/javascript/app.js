@@ -51,13 +51,15 @@ function renderActionArea(player, active, element, gamestate){
 
 				break;
 			case "PLACE":
+				var cardName = document.createElement("div");
+				cardName.innerHTML = player.currentCard;
+				activeArea.append(cardName);
 				//show player where he can put his card
 				displayAvailableSpots(gamestate);
-
 				break;
 			case "LURE":
-				//lure available
-				//end turn button
+				//Display available spots for lure
+				displayAvailableLure(gamestate);
 				break;
 			default:
 				//ships fly
@@ -90,6 +92,7 @@ function renderBoard(gameState){
 			// draw the card if it exists
 			drawCard(gameState, x, y, cell);
 			drawShips(gameState, x, y, cell);
+			drawLure(gameState, x, y, cell);
 		}
 	}
 
@@ -113,6 +116,13 @@ function drawShips(gameState, x, y, cell){
 
 	if(ships.length>0){
 		cell.innerHTML += " "+ships.length;
+	}
+}
+
+function drawLure(gameState, x, y, cell){
+	var n = checkLure(gameState, x, y);
+	if(n>=0){
+		cell.innerHTML += " P"+n;
 	}
 }
 
@@ -144,6 +154,48 @@ function findAvailableSpots(gamestate){
 	return available;
 }
 
+function checkLure(gameState, x, y){
+	return gameState.players.findIndex(function(player, n){
+		return player.lure && player.lure.x == x && player.lure.y == y;
+	});
+}
+
+function findAvailableCards(gameState){
+	var available = [];
+	gameState.board.tiles.forEach(function(tile){
+		var lured = false;
+		var shiped = false;
+		var trashed = false;
+
+		// Is there a lure at this coordinates?
+
+		if(checkLure(gameState, tile.x, tile.y)>=0){
+			lured = true;
+		}
+
+		// Are there ships at this coordinates?
+		if(gameState.board.ships){
+			gameState.board.ships.forEach(function(ship){
+				if(ship.x==tile.x && ship.y==tile.y){
+					shiped = true;
+				}
+			});
+		}
+
+		// Is it a trash?
+		if(tile.type=="pub"){
+			trashed = true;
+		}
+
+		if(!lured && !shiped && !trashed){
+			console.log("Tile ",tile)
+			available.push(tile);
+		}
+
+	});
+	return available;
+}
+
 function checkSpot(gamestate, available, spot){
 	//check if this spot is on the board
 	var onBoard = spot.x<rows && spot.y<cols && spot.x >= 0 && spot.y >= 0;
@@ -171,6 +223,22 @@ function displayAvailableSpots(gameState){
 
 	});
 }
+
+function displayAvailableLure(gameState){
+	var available = findAvailableCards(gameState);
+	available.forEach(function(card){
+		var cell = document.querySelector('[data-x="'+card.x+'"][data-y="'+card.y+'"]');
+		cell.innerHTML += " "+"L";
+		cell.onclick = function(){
+			sendEvent(gameState.phase, {
+				player: gameState.player, 
+				x: card.x,
+				y: card.y,
+			});
+		};
+	});
+}
+
 
 ipcRenderer.on('GSO', (event, arg) => {
   console.log(event, arg) // helper, prints objects to use
