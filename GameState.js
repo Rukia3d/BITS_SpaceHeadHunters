@@ -42,7 +42,7 @@ class GameState {
 
 	// places a card at tile returns true on success.
 	placeCard(player, x, y) {
-
+		
 		if (this.phase === "PLACE") 
 			if (this.board.placeCard(this.players[player].currentCard, x, y)) {
 				

@@ -40,6 +40,7 @@ app.on("ready", function() {
 			// go to place
 			gso.nextPhase();
 		}
+
 		event.sender.send("GSO", gso.getGameState());
 	});
 

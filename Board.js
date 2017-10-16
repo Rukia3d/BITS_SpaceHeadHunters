@@ -19,8 +19,8 @@ class Board {
 
         for (let j = 0; j < this.tiles.length; ++j) {
 
-            if((Math.abs(this.tiles[j].x - x) === 1 && this.tiles[j].y == y) ||
-               (Math.abs(this.tiles[j].y - y) == 1 && this.tiles[j].x == x)) {
+            if((Math.abs(this.tiles[j].x - x) === 1 && this.tiles[j].y === y) ||
+               (Math.abs(this.tiles[j].y - y) === 1 && this.tiles[j].x === x)) {
                 
                     this.tiles.push({"type": crd, "x": x, "y": y});
                     this.placeShip(x, y);
@@ -52,21 +52,26 @@ class Board {
     }
     
     placeShip(x, y) {
-
+        
         this.tiles.forEach(function(i) {
-            if (i.type === "gate") {
-
-                var numShips = parseInt(this.getTile(x, y).substring(4));
-                
-                for(var j = 0; j < numShips; ++j) {
     
-                    this.ships.push({ "x" : x, "y" : y });
-
+            if (i.x === x && i.y === y) {
+                
+                if (i.type.substring(0, 4) === "gate") {
+        
+                    var numShips = parseInt(i.type.substring(4));
+        
+                    for(var j = 0; j < numShips; ++j) {
+        
+                        this.ships.push({ "x" : i.x, "y" : i.y });
+                    }
+        
                 }
 
             }
-
-        }, this)
+    
+        }, this);
+        
         
     }
 
