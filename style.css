@@ -10,11 +10,14 @@ body {
 	display: flex; /* Using flexbox to position elements */
 	flex-direction: column;
 	align-items: stretch;
+	background-image: url('assets/images/background.jpg');
+	background-size: cover;
+	color: #fff;
 }
 
 /* HEADER STYLES */
 #header{
-	background-color: blue;
+	/* background-color: blue; */
 	flex: 0 1 75px;
 	display: flex; 
 	flex-direction: row;
@@ -22,8 +25,39 @@ body {
 }
 
 #header button{
-	background-color: green;
+	/* background-color: green; */
 	flex: 0 1 75px;
+}
+
+#header #about, #settings { 
+	background-color: transparent;
+	border: none;
+	outline: none;
+	transition: background-image .1s ease-in-out;
+}
+
+#header #about {
+	background-image: url('assets/images/button_about.png');
+}
+
+#header #about:hover {
+	background-image: url('assets/images/button_about_active.png');
+}
+
+#header #about:active {
+	background-image: url('assets/images/button_about_active.png');
+}
+
+#header #settings {
+	background-image: url('assets/images/button_setting.png');
+}
+
+#header #settings:hover {
+	background-image: url('assets/images/button_setting_active.png');
+}
+
+#header #settings:active {
+	background-image: url('assets/images/button_setting_active.png');
 }
 
 #header h1{
@@ -33,14 +67,14 @@ body {
 
 /* FOOTER STYLES */
 #footer{
-	background-color: red;
+	/* background-color: red; */
 	flex: 0 1 75px;
 }
 
 
 /* THE TABLE */
 #gamearea{
-	background-color: yellow;
+	/* background-color: yellow; */
 	flex: 1 1 auto;
 	display: flex; 
 	flex-direction: row;
@@ -48,65 +82,112 @@ body {
 }
 
 #center{
-	background-color: violet;
+	/* background-color: violet; */
 	flex: 1 1 auto;
 	position: relative;
-	margin: 10px;
+	margin: 5px;
 }
 
 #leftside{
-	background-color: green;
+	/* background-color: green; */
 	flex: 0 1 135px;
 }
 
 #rightside{
-	background-color: pink;
+	/* background-color: pink; */
 	flex: 0 1 135px;
 }
 
 /* PLAYERS */
 .player{
 	display:block;
-	width: 100%;
+	width: calc(100% - 10px);
 	height: 45%;
-	margin-top: 10px;
-	margin-bottom: 10px;
-	background-color: white;
+	margin: 10px 5px 10px 5px;
+	/* background-color: white; */
+	background: linear-gradient(#000, #006282);
 }
 
 .player h3{
 	text-align: center;
 	margin: 0 auto;
+	font-size: 36px;
 }
 
 .player .avatar{
 	height: 105px;
 	width: 135px;
-	background-color: green;
+	/* background-color: green; */
 }
 
 .player .statusline{
-	width: 135px;
+	width: 115px;
 	height: 20px;
-	background-color: red;
+	/* background-color: red; */
 	position: relative;
 	margin-top: -20px;
+	padding: 0 10px 0 10px;
 }
 
 .player .scorearea{
-	width: 135px;
-	height: 65px;
-	background-color: blue;
+	width: 60px;
+	height: 60px;
+	/* background-color: blue; */
+	background-color: #fff;
+	color: #000;
+	font-weight: bold;
+	text-align: center;
+	line-height: 30px;
+	margin: 2.5px 37.5px 2.5px 37.5px;
+	border-radius: 30px;
 }
 
-.player .actionarea{
+.player .scorenumber {
+	font-size: 36px;
+	display: block;
+	margin: -10px 0 0 0;
+	padding: 0;
+}
+
+.player .actionarea {
 	width: 135px;
 	height: 90px;
-	background-color: yellow;
+	text-align: center;
+	/* background-color: yellow; */
+}
+
+.player .actionarea button {
+	margin-top: 5px;
+	background-color: #9F3700;
+	border: 0;
+	border-radius: 10px;
+	outline: none;
+	height: 30px;
+	transition: background-color .2s ease-in-out;
+}
+
+.player .actionarea button:hover {
+	background-color: #CF6730;
 }
 
 .player .greybox{
 	background-color: grey;
+}
+
+#player1 .avatar {
+	background-image: url('assets/images/playerRed_avatar.png');
+}
+
+#player2 .avatar {
+	background-image: url('assets/images/playerYellow_avatar.png');
+}
+
+#player3 .avatar {
+	background-image: url('assets/images/playerGreen_avatar.png');
+}
+
+#player4 .avatar {
+	background-image: url('assets/images/playerBlue_avatar.png');
 }
 
 /* BOARD */
@@ -120,7 +201,8 @@ body {
 }
 
 #board .cell{
-	flex: 0 1 11.11%;
-	height: 11.11%;
-	background-color: grey;
+	flex: 0 1 calc(11.11% - 4px);
+	height: calc(11.11% - 4px);
+	margin: 2px;
+	background-color: rgba(100, 100, 100, 0.7);
 }
