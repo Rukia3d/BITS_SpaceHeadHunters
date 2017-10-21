@@ -17,19 +17,70 @@ function renderPlayers(gameState){
 	renderPlayer(gameState.players[3],gameState.player==3, p4div, gameState);
 }
 
-// Josh, here's the player's part
+// Render each player
 function renderPlayer(player, active, element, gamestate){
 	//Clear the area for drawing
 	element.innerHTML = "";
-	//If there's no player - render an empty div with id = element
-	//If we have a player
-		//render h3 name
-		//render avatar
-		//render status line
-		//render score
-		//render action area
+
+	//Checks for player
+	if (player == null){
+		document.createElement("div");
+		id = element;
+	}
+
+	else{
+		renderPlayerName();
+		renderAvatar();
+		renderStatusLine()
+		renderActiveScore();	
 		renderActionArea(player, active, element, gamestate);
-}
+	}
+	
+		function renderPlayerName(){
+			element.innerHTML = element.id;
+			
+		}
+
+		function renderAvatar() {
+			var avatar = document.createElement("div");
+			avatar.className = "avatar";
+			element.appendChild(avatar);
+		}
+
+		function renderStatusLine(){
+			var statusLine = document.createElement("div");
+			statusLine.className = "statusline";
+			element.appendChild(statusLine);
+		}
+
+		function renderActiveScore() {
+			var activeScore = document.createElement("div");
+			activeScore.className = ("scorearea");
+			
+			var p1 = document.getElementById("player1");
+			var p2 = document.getElementById("player2");
+			var p3 = document.getElementById("player3");
+			var p4 = document.getElementById("player4");	
+
+			if(element === p1){				
+				activeScore.innerHTML = "Score " + gamestate.players[0].score;
+				element.appendChild(activeScore);
+				
+			 }else if(element === p2){					
+				activeScore.innerHTML = "Score " + gamestate.players[1].score;
+				element.appendChild(activeScore);
+				
+			 }else if(element === p3){
+				activeScore.innerHTML = "Score " + gamestate.players[2].score;
+				element.appendChild(activeScore);
+
+			 }else{
+				activeScore.innerHTML = "Score " + gamestate.players[3].score;
+				element.appendChild(activeScore);
+			 }
+    	}
+	}
+
 
 function renderActionArea(player, active, element, gamestate){
 	var activeArea = document.createElement("div");
