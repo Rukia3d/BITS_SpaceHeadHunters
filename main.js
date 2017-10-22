@@ -68,22 +68,30 @@ app.on("ready", function() {
 		}
 
 		event.sender.send("GSO", gso.getGameState());
+	});
 
-		// if the lure was good, and we were on the last player, we should be on SHIPSFLY
-		if(gso.phase == "SHIPSFLY") {
-			
-			// fly the ships and go to SCORING
-			gso.nextPhase();
-			event.sender.send("GSO", gso.getGameState());
+	ipc.on('SHIPSFLY', function(event, data) {
+		// fly the ships, and set's the phase to SCORING
+		gso.nextPhase();
 
-			// Score and go to SHIPSFLEE
-			gso.nextPhase();
-			event.sender.send("GSO", gso.getGameState());
+		// let front end know the current phase
+		event.sender.send("GSO", gso.getGameState());
+	});
 
-			// Flee and either END, or go back to DRAW
-			gso.nextPhase();
-			event.sender.send("GSO", gso.getGameState());
-		}
+	ipc.on('SCORING', function(event, data) {
+		// score, and set phase to SHIPSFLEE
+		gso.nextPhase();
+
+		// let front end know the current phase
+		event.sender.send("GSO", gso.getGameState());
+	});
+
+	ipc.on('SHIPSFLEE', function(event, data) {
+		// flee, and set phase to DRAW or END
+		gso.nextPhase();
+
+		// let front end know the current phase
+		event.sender.send("GSO", gso.getGameState());
 	});
 
 	// reset
