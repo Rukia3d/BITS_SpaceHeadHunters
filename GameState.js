@@ -2,6 +2,10 @@ var deckData = require("./deck.json"); // deck json
 var Deck = require("./Deck.js"); // deck class
 let Board = require("./Board.js") // board class
 
+// network vars
+var networked = false;
+var playerIndex = null;
+
 class GameState {
 
 	constructor(numPlayers) {
@@ -29,8 +33,31 @@ class GameState {
 
 	}
 
+	setGameState(gso) {
+
+		this.deck = gso.deck;
+		this.board = gso.board;
+		this.players = gso.players;
+		this.phase = gso.phase;
+		this.player = gso.player;
+	}
+
+	setPlayerIndex(index) {
+
+		this.playerIndex = index;
+	}
+
+	setNetworked(bool) {
+		
+		this.networked = bool;
+	}
+
 	// gives the player a card returns true on succes, false otherwise.
 	drawCard(player) {
+
+		// network game constraint
+		if(this.networked && this.playerIndex != this.player)
+			return false;
 
 		if (this.players[player].currentCard || this.phase != "DRAW")
 			return false;
@@ -42,6 +69,10 @@ class GameState {
 
 	// places a card at tile returns true on success.
 	placeCard(player, x, y) {
+
+		// network game constraint
+		if(this.networked && this.playerIndex != this.player)
+			return false;
 		
 		if (this.phase === "PLACE") 
 			if (this.board.placeCard(this.players[player].currentCard, x, y)) {
@@ -57,6 +88,10 @@ class GameState {
 
 	// returns true on success
 	placeLure(player, x, y) {
+
+		// network game constraint
+		if(this.networked && this.playerIndex != this.player)
+			return false;
 
 		let currPlayer = this.players[player];
 
