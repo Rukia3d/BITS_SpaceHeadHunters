@@ -21,66 +21,83 @@ function renderPlayers(gameState){
 function renderPlayer(player, active, element, gamestate){
 	//Clear the area for drawing
 	element.innerHTML = "";
+	var p1 = document.getElementById("player1");
+	var p2 = document.getElementById("player2");
+	var p3 = document.getElementById("player3");
+	var p4 = document.getElementById("player4");
+	
 
 	//Checks for player
 	if (player == null){
 		document.createElement("div");
 		id = element;
-	}
-
+		}
+	
 	else{
 		renderPlayerName();
 		renderAvatar();
 		renderStatusLine()
 		renderActiveScore();	
 		renderActionArea(player, active, element, gamestate);
-	}
-	
-		function renderPlayerName(){
-			element.innerHTML = element.id;
-			
 		}
-
+		//Render player name
+		function renderPlayerName(){
+			var elementH = document.createElement("h3");	
+			
+			if (element === p1){
+				p1.appendChild(elementH);
+				var playerName = document.createTextNode(element.id);
+				elementH.appendChild(playerName);
+			}else if (element === p2){
+				p2.appendChild(elementH);
+				var playerName = document.createTextNode(element.id);
+				elementH.appendChild(playerName);
+			}else if (element === p3){
+				p3.appendChild(elementH);
+				var playerName = document.createTextNode(element.id);
+				elementH.appendChild(playerName);
+			}else if (element === p4){
+				p4.appendChild(elementH);
+				var playerName = document.createTextNode(element.id);
+				elementH.appendChild(playerName);
+			}
+		}
+		//render avatar
 		function renderAvatar() {
 			var avatar = document.createElement("div");
 			avatar.className = "avatar";
 			element.appendChild(avatar);
 		}
-
+		//render status line
 		function renderStatusLine(){
 			var statusLine = document.createElement("div");
 			statusLine.className = "statusline";
 			element.appendChild(statusLine);
 		}
-
+		//Render players score
 		function renderActiveScore() {
 			var activeScore = document.createElement("div");
 			activeScore.className = ("scorearea");
-			
-			var p1 = document.getElementById("player1");
-			var p2 = document.getElementById("player2");
-			var p3 = document.getElementById("player3");
-			var p4 = document.getElementById("player4");	
-
+				
 			if(element === p1){				
 				activeScore.innerHTML = "Score " + gamestate.players[0].score;
 				element.appendChild(activeScore);
-				
+					
 			 }else if(element === p2){					
 				activeScore.innerHTML = "Score " + gamestate.players[1].score;
 				element.appendChild(activeScore);
-				
+					
 			 }else if(element === p3){
 				activeScore.innerHTML = "Score " + gamestate.players[2].score;
 				element.appendChild(activeScore);
-
-			 }else{
+	
+			 }else if (element === p4){
 				activeScore.innerHTML = "Score " + gamestate.players[3].score;
 				element.appendChild(activeScore);
 			 }
-    	}
-	}
-
+		}
+	
+}
 
 function renderActionArea(player, active, element, gamestate){
 	var activeArea = document.createElement("div");
