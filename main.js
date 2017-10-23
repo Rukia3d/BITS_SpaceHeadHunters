@@ -10,6 +10,22 @@ var ipc = electron.ipcMain;
 let gso = {};
 let appWindow;
 
+// server
+const server = require("http").createServer();
+const io_server = require("socket.io")(server);
+const io_client = require("socket.io-client");
+const fs = require("fs");
+
+let socket = io_client("http://");
+
+let gState = {
+    pCount: 0,
+    p1_id: null,
+    p2_id: null,
+    p3_id: null,
+    p4_id: null    
+};
+
 // ----------------------------------------------------------------------------
 // Window Creation
 // ----------------------------------------------------------------------------
@@ -62,13 +78,15 @@ ipc.on('HOTSEAT', function(event, players) {
 // connect to an existing hosted game via ip address
 ipc.on('CONNECT', function(event, ip) {
 	console.log(`Connecting to ${ip}`);
-	appWindow.loadURL("file://" + __dirname + "/index.html");
+	socket = io_client("http://localhost:3000");
 });
 
 // begin server script for hosting a game
 // output the current number of players to lobby
 ipc.on('HOST', function(event, {}) {
 	console.log(`Hosting a new game`);
+	server.listen(3000);
+	socket = io_client("http://localhost:3000");
 });
 
 // start a hosted game
@@ -86,6 +104,7 @@ ipc.on('HOSTSTART', function(event, players) {
 // end the server script for a hosted game
 ipc.on('HOSTEND', function(event, {}) {
 	console.log(`Cancelling new hosted game`);
+	server.close();
 });
 
 // ----------------------------------------------------------------------------
@@ -166,3 +185,120 @@ ipc.on('RESET', function(event, {}) {
 	event.sender.send("GSO", gso.getGameState());
 
 });
+
+// ----------------------------------------------------------------------------
+// Client
+// ----------------------------------------------------------------------------
+socket.on("updateState", (event, data) => {
+	
+    console.log(event);
+    console.log(data);
+
+});
+
+// ----------------------------------------------------------------------------
+// Server
+// ----------------------------------------------------------------------------
+
+io_server.on("connection", (socket) => {
+
+    console.log("Connection found: " + socket.id);
+    printIds(io_server.sockets.connected);
+
+    if (!addPlayer(gState, socket.id)) {
+        console.log("Player slots full...");
+        // TODO disconnect the connection
+    } else {
+        io_server.emit("updateState", "connected", gState);
+    }
+
+    socket.on("disconnect", (reason) => {
+        
+        removePlayer(gState, socket.id);
+        console.log("Disconnection: " + socket.id + " - " + reason);
+        printIds(io_server.sockets.connected);
+
+        io_server.emit("updateState", "disconnected", gState);   
+
+    });
+
+    socket.on("fetchState", (event, data) => {
+        
+        console.log("fetch state...");
+        socket.emit("updateState", "connected", gState);
+    
+    });
+
+});
+
+function printIds(clients) {
+    
+        console.log("*** Connected Clients ***")    
+        
+        for (id in clients) {
+            console.log("\t" + id);
+        }
+        
+        console.log("*************************\n")
+        
+    }
+    
+function addPlayer(gState, id) {
+
+    if (gState.pCount <= 3) {
+        
+        gState.pCount++;
+
+        if (gState.p1_id === null) {
+            gState.p1_id = id;
+            return true;
+        }
+
+        if (gState.p2_id === null) {
+            gState.p2_id = id;
+            return true;
+        }
+
+        if (gState.p3_id === null) {
+            gState.p3_id = id;
+            return true;
+        }
+
+        if (gState.p4_id === null) {
+            gState.p4_id = id;
+            return true;
+        }
+
+    }
+    
+    return false;
+
+}
+
+function removePlayer(gState, id) {
+
+    if (gState.pCount > 0) {
+        
+        gState.pCount--;
+
+        if (gState.p1_id === id) {
+            gState.p1_id = null;
+            return;
+        }
+
+        if (gState.p2_id === id) {
+            gState.p2_id = null;
+            return;
+        }
+
+        if (gState.p3_id === id) {
+            gState.p3_id = null;
+            return;
+        }
+
+        if (gState.p4_id === id) {
+            gState.p4_id = null;
+            return;
+        }
+    }
+}
