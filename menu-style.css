@@ -57,6 +57,23 @@ h1 {
 	font-size: 36px;
 }
 
+#hotseat-player-count {
+	padding-top: 10px;
+	margin-top: 20px;
+	padding-bottom: 10px;
+	height: auto;
+	line-height: 100%;
+	font-size: 36px;
+}
+
+#hotseat-players {
+	border: none;
+	outline: none;
+	height: 30px;
+	padding: 0;
+	text-align: center;
+}
+
 .ip-address {
 	border: none;
 	outline: none;

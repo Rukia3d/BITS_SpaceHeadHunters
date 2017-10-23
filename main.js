@@ -37,15 +37,18 @@ app.on("window-all-closed", app.quit);
 // Main Menu
 // ----------------------------------------------------------------------------
 
+// Exit the app
 ipc.on('EXIT', function(event, {}) {
 	app.quit();
 });
 
-ipc.on('HOTSEAT', function(event, {}) {
+
+// create a new hotseat game with the specified number of players
+ipc.on('HOTSEAT', function(event, players) {
 	
-	console.log(`Starting a new hotseat game`);
+	console.log(`Starting a new hotseat game with ${players} players`);
 	
-	gso = new GameState(2);
+	gso = new GameState(players);
 
 	appWindow.loadURL("file://" + __dirname + "/index.html");
 	
@@ -55,15 +58,20 @@ ipc.on('HOTSEAT', function(event, {}) {
 	});
 });
 
-ipc.on('CONNECT', function(event, arg) {
-	console.log(`Connecting to ${arg}`);
+
+// connect to an existing hosted game via ip address
+ipc.on('CONNECT', function(event, ip) {
+	console.log(`Connecting to ${ip}`);
 	appWindow.loadURL("file://" + __dirname + "/index.html");
 });
 
+// begin server script for hosting a game
+// output the current number of players to lobby
 ipc.on('HOST', function(event, {}) {
 	console.log(`Hosting a new game`);
 });
 
+// start a hosted game
 ipc.on('HOSTSTART', function(event, players) {
 	gso = new GameState(players);
 
@@ -75,6 +83,7 @@ ipc.on('HOSTSTART', function(event, players) {
 	});
 });
 
+// end the server script for a hosted game
 ipc.on('HOSTEND', function(event, {}) {
 	console.log(`Cancelling new hosted game`);
 });

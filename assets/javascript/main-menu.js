@@ -12,26 +12,48 @@ var mainMenuPanel = document.getElementById('main-menu');
 var networkPanel = document.getElementById('network');
 var settingsPanel = document.getElementById('settings');
 var lobbyPanel = document.getElementById('lobby');
+var hotseatPanel = document.getElementById('hotseat');
+
 
 // settings
 var settingsBack = document.getElementById('settings-back');
 
+// hotseat
+var hotseatBack = document.getElementById('hotseat-back');
+var hotseatStart = document.getElementById('hotseat-start');
+var hotseatPlayers = document.getElementById('hotseat-players');
+
 // network
 var networkBack = document.getElementById('network-back');
-var host = document.getElementById('host');
 var connect = document.getElementById('connect');
 var lobbyBtn = document.getElementById('lobby-btn');
 
 // lobby
 var lobbyBack = document.getElementById('lobby-back');
+var hostStart = document.getElementById('host-start');
 
 //-----------------------------------------------------------------------------
 // HOTSEAT
 //-----------------------------------------------------------------------------
+
 hotseat.onclick = function(e) 
 {
 	e.preventDefault();
-	ipcRenderer.send('HOTSEAT', {});
+	hotseatPanel.style.display = 'block';
+	mainMenuPanel.style.display = 'none';
+}
+
+hotseatStart.onclick = function(e) 
+{
+	e.preventDefault();
+	ipcRenderer.send('HOTSEAT', parseInt(hotseatPlayers.value));
+}
+
+hotseatBack.onclick = function(e) 
+{
+	e.preventDefault();
+	hotseatPanel.style.display = 'none';
+	mainMenuPanel.style.display = 'block';
 }
 
 //-----------------------------------------------------------------------------
@@ -107,7 +129,7 @@ lobbyBack.onclick = function(e)
 }
 
 // LOBBY Host
-host.onclick = function(e) 
+hostStart.onclick = function(e) 
 {
 	e.preventDefault();
 	ipcRenderer.send('HOSTSTART', {});
