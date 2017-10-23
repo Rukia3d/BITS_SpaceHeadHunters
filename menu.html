@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Space Head Hunters</title>
+		<link href="https://fonts.googleapis.com/css?family=Geo" rel="stylesheet">
+		<link rel="stylesheet" href="menu-style.css">
+	</head>
+	<body>
+		<h1>SPACE HEAD HUNTERS</h1>
+		<div class="submenu" id="settings">
+			<ul>
+				<li>Volume: <input id="volume" type="range" min="0" max="100" step="1"></input></li>
+				<a href="" class="btn" id="settings-back"><li>Back</li></a>
+			</ul>
+		</div>
+		<div class="submenu" id="network">
+			<ul>
+				<a href="index.html" class="btn" id="host"><li>Host Game</li></a>
+				<li id="connect-to-ip">Connect to IP<br/>
+					<form>
+						<input class="ip-address" id="ip-1" type="text" size="3" maxlength="4" onkeyup="nextSegment(this)"></input> .
+						<input class="ip-address" id="ip-2" type="text" size="3" maxlength="4" onkeyup="nextSegment(this)"></input> .
+						<input class="ip-address" id="ip-3" type="text" size="3" maxlength="4" onkeyup="nextSegment(this)"></input> .
+						<input class="ip-address" id="ip-4" type="text" size="3" maxlength="4" onkeyup="nextSegment(this)"></input>
+						<br/>
+						<button type="submit" id="connect">Connect</button>
+					</form>
+				</li>
+				<a href="" class="btn" id="network-back"><li>Back</li></a>
+			</ul>
+		</div>
+		<div id="main-menu">
+			<ul>
+				<a href="" class="btn" id="btn-hotseat"><li>Hotseat Game</li></a>
+				<a href="" class="btn" id="btn-network"><li>Network Game</li></a>
+				<a href="" class="btn" id="btn-settings"><li>Settings</li></a>
+				<a href="" class="btn" id="btn-exit"><li>Exit</li></a>
+			</ul>
+		</div>
+		<script src="assets/javascript/main-menu.js" type="text/javascript"></script>
+	</body>
+</html>

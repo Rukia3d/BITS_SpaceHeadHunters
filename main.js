@@ -22,7 +22,7 @@ app.on("ready", function() {
 		show: false
 	});
 
-	appWindow.loadURL("file://" + __dirname + "/index.html");
+	appWindow.loadURL("file://" + __dirname + "/menu.html");
 
 	appWindow.once("ready-to-show", function() {
 
@@ -106,6 +106,29 @@ app.on("ready", function() {
 
 	});
 
+
+	/* ---------------------------------------------------------------------- */
+	/* MENU STUFF															  */
+	/* ---------------------------------------------------------------------- */
+
+	ipc.on('EXIT', function(event, {}) {
+		app.quit();
+	});
+
+	ipc.on('HOTSEAT', function(event, {}) {
+		console.log(`Starting a new hotseat game`);
+		appWindow.loadURL("file://" + __dirname + "/index.html");
+	});
+
+	ipc.on('CONNECT', function(event, arg) {
+		console.log(`Connecting to ${arg}`);
+		appWindow.loadURL("file://" + __dirname + "/index.html");
+	});
+
+	ipc.on('HOST', function(event, {}) {
+		console.log(`Hosting a new game`);
+		appWindow.loadURL("file://" + __dirname + "/index.html");
+	});
 });
 
 app.on("window-all-closed", app.quit);
