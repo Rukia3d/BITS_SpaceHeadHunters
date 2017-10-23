@@ -16,7 +16,7 @@
 		</div>
 		<div class="submenu" id="network">
 			<ul>
-				<a href="index.html" class="btn" id="host"><li>Host Game</li></a>
+				<a href="" class="btn" id="lobby-btn"><li>Host Game</li></a>
 				<li id="connect-to-ip">Connect to IP<br/>
 					<form>
 						<input class="ip-address" id="ip-1" type="text" size="3" maxlength="4" onkeyup="nextSegment(this)"></input> .
@@ -28,6 +28,13 @@
 					</form>
 				</li>
 				<a href="" class="btn" id="network-back"><li>Back</li></a>
+			</ul>
+		</div>
+		<div class="submenu" id="lobby">
+			<ul>
+				<li><span id="playerCount">0</span> Players Connected</li>
+				<a href="" class="btn" id="host"><li>Start Game</li></a><br/><br/>
+				<a href="menu.html" class="btn" id="lobby-back"><li>Back</li></a>
 			</ul>
 		</div>
 		<div id="main-menu">

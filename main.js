@@ -62,7 +62,21 @@ ipc.on('CONNECT', function(event, arg) {
 
 ipc.on('HOST', function(event, {}) {
 	console.log(`Hosting a new game`);
+});
+
+ipc.on('HOSTSTART', function(event, players) {
+	gso = new GameState(players);
+
 	appWindow.loadURL("file://" + __dirname + "/index.html");
+	
+	// send the GSO once the window is ready
+	appWindow.webContents.once('did-finish-load', function() {
+		appWindow.webContents.send('GSO', gso.getGameState());
+	});
+});
+
+ipc.on('HOSTEND', function(event, {}) {
+	console.log(`Cancelling new hosted game`);
 });
 
 // ----------------------------------------------------------------------------

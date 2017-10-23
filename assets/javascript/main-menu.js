@@ -11,6 +11,7 @@ var exit = document.getElementById('btn-exit');
 var mainMenuPanel = document.getElementById('main-menu');
 var networkPanel = document.getElementById('network');
 var settingsPanel = document.getElementById('settings');
+var lobbyPanel = document.getElementById('lobby');
 
 // settings
 var settingsBack = document.getElementById('settings-back');
@@ -19,6 +20,10 @@ var settingsBack = document.getElementById('settings-back');
 var networkBack = document.getElementById('network-back');
 var host = document.getElementById('host');
 var connect = document.getElementById('connect');
+var lobbyBtn = document.getElementById('lobby-btn');
+
+// lobby
+var lobbyBack = document.getElementById('lobby-back');
 
 //-----------------------------------------------------------------------------
 // HOTSEAT
@@ -68,10 +73,12 @@ function nextSegment(obj)
 	}
 }
 
-// NETWORK Host
-host.onclick = function(e) 
+// NETWORK LOBBY
+lobbyBtn.onclick = function(e)
 {
 	e.preventDefault();
+	networkPanel.style.display = 'none';
+	lobbyPanel.style.display = 'block';
 	ipcRenderer.send('HOST', {});
 }
 
@@ -84,6 +91,26 @@ connect.onclick = function(e)
 					document.getElementById('ip-3').value + "." + 
 					document.getElementById('ip-4').value;
 	ipcRenderer.send('CONNECT', ipAddress);
+}
+
+//-----------------------------------------------------------------------------
+// LOBBY
+//-----------------------------------------------------------------------------
+
+// SETTINGS back
+lobbyBack.onclick = function(e) 
+{
+	e.preventDefault();
+	networkPanel.style.display = 'block';
+	lobbyPanel.style.display = 'none';
+	ipcRenderer.send('HOSTEND', {});
+}
+
+// LOBBY Host
+host.onclick = function(e) 
+{
+	e.preventDefault();
+	ipcRenderer.send('HOSTSTART', {});
 }
 
 //-----------------------------------------------------------------------------
@@ -112,4 +139,3 @@ exit.onclick = function(e)
 	e.preventDefault();
 	ipcRenderer.send('EXIT', {});
 }
-
