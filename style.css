@@ -183,11 +183,11 @@ body {
 }
 
 #player3 .avatar {
-	background-image: url('assets/images/playerGreen_avatar.png');
+	background-image: url('assets/images/playerBlue_avatar.png');
 }
 
 #player4 .avatar {
-	background-image: url('assets/images/playerBlue_avatar.png');
+	background-image: url('assets/images/playerGreen_avatar.png');
 }
 
 /* BOARD */
