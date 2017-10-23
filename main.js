@@ -18,6 +18,7 @@ app.on("ready", function() {
 
 		width: 950,
 		height: 750,
+		backgroundColor: '#006282',
 		icon: path.join(__dirname, 'assets/icons/png/64x64.png'),
 		show: false
 	});

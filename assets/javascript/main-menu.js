@@ -26,7 +26,7 @@ var connect = document.getElementById('connect');
 hotseat.onclick = function(e) 
 {
 	e.preventDefault();
-	sendEvent('HOTSEAT', {});
+	ipcRenderer.send('HOTSEAT', {});
 }
 
 //-----------------------------------------------------------------------------
