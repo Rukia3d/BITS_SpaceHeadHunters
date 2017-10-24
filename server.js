@@ -69,7 +69,7 @@ function printIds(clients) {
     
 function addPlayer(gState, id) {
 
-    if (gState.pCount < 3) {
+    if (gState.pCount <= 3) {
         
         gState.pCount++;
 

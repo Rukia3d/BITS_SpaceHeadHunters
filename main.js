@@ -12,14 +12,6 @@ let appWindow;
 var socket = null;
 var server = null;
 
-let gState = {
-    pCount: 0,
-    p1_id: null,
-    p2_id: null,
-    p3_id: null,
-    p4_id: null    
-};
-
 // ----------------------------------------------------------------------------
 // Window Creation
 // ----------------------------------------------------------------------------
@@ -118,6 +110,8 @@ ipc.on('HOST', function(event, {}) {
 	    console.log(event);
 	    console.log(data);
 	    console.log(data.pCount);
+
+	    // updates the lobby section in menu.html via main-menu.js
 		appWindow.webContents.send("playerUpdate", data.pCount);
 	});
 
@@ -155,7 +149,7 @@ ipc.on('HOSTEND', function(event, {}) {
 	console.log(`Cancelling new hosted game`);
 	socket.disconnect();
 
-	// TODO KILL the MotherF&#%er child process.
+	// TODO KILL the MotherF&#%er child process because server is still running if the host hits the back button
 });
 
 // ----------------------------------------------------------------------------
