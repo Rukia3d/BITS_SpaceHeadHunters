@@ -1,16 +1,22 @@
 // includes
 var electron = require("electron");
 var path = require("path");
-var GameState = require("./GameState.js");
+var Client = require("./client.js");
 
 var BrowserWindow = electron.BrowserWindow;
 var app = electron.app;
 var ipc = electron.ipcMain;
 
-let gso = {};
 let appWindow;
-var socket = null;
-var server = null;
+let client = new Client();
+
+function menuCallBack() {
+	appWindow.loadURL("file://" + __dirname + "/menu.html");	
+}
+
+function gameCallBack() {
+	appWindow.loadURL("file://" + __dirname + "/index.html");	
+}
 
 // ----------------------------------------------------------------------------
 // Window Creation
@@ -27,10 +33,13 @@ app.on("ready", function() {
 	});
 
 	appWindow.loadURL("file://" + __dirname + "/menu.html");
+	client.attachGameCallBack(gameCallBack);
+	client.attachMenuCallBack(menuCallBack);
 
 	appWindow.once("ready-to-show", function() {
 		appWindow.show();
 	});
+
 });
 
 app.on("window-all-closed", app.quit);
@@ -48,92 +57,44 @@ ipc.on('EXIT', function(event, {}) {
 // create a new hotseat game with the specified number of players
 ipc.on('HOTSEAT', function(event, players) {
 	
-	console.log(`Starting a new hotseat game with ${players} players`);
-	
-	gso = new GameState(players);
+	client.changeState("HOTSEAT", {"players": players});
 
-	appWindow.loadURL("file://" + __dirname + "/index.html");
-	
 	// send the GSO once the window is ready
 	appWindow.webContents.once('did-finish-load', function() {
-		appWindow.webContents.send('GSO', gso.getGameState());
+		appWindow.webContents.send('GSO', client.requestGameState());
 	});
+
 });
 
 
 // connect to an existing hosted game via ip address
 ipc.on('CONNECT', function(event, ip) {
-	console.log(`Connecting to ${ip}`);
-	const io_client = require("socket.io-client");
-	socket = io_client.connect('http://localhost:3000');
-	gso = new GameState(2);
 
-	socket.on("updateState", (event, data) => {
+	client.changeState("CONNECT", {"ip": ip});
+	// send the GSO once the window is ready
+	appWindow.webContents.once('did-finish-load', function() {
+		appWindow.webContents.send('GSO', client.requestGameState());
+	});
 	
-	    console.log(event);
-	    console.log(data);
-	    appWindow.webContents.send("playerUpdate", data.pCount);
-	});
-
-	socket.on("updateClientGSO", (data) => {
-		console.log(`Updating client GSO ${data}`);
-		gso.setGameStateJSON(data);
-		appWindow.webContents.send("GSO", gso.getGameState());
-	});
-
-	socket.on("startGameClient", (data) => {
-		console.log(`Starting client game`);
-		appWindow.loadURL("file://" + __dirname + "/index.html");
-	
-		// send the GSO once the window is ready
-		appWindow.webContents.once('did-finish-load', function() {
-			appWindow.webContents.send('GSO', gso.getGameState());
-		});
-	});
 });
 
 // begin server script for hosting a game
 // output the current number of players to lobby
 ipc.on('HOST', function(event, {}) {
-	console.log(`Hosting a new game`);
-
-	// server
-	const io_client = require("socket.io-client");
-	spawn = require('child_process').spawn;
-	server = spawn('node', ['server.js'], { detached : true });
-
-	// client
-	socket = io_client.connect('http://localhost:3000');
-
-	socket.on("updateState", (event, data) => {
 	
-	    console.log(event);
-	    console.log(data);
-	    console.log(data.pCount);
-
-	    // updates the lobby section in menu.html via main-menu.js
-		appWindow.webContents.send("playerUpdate", data.pCount);
-	});
-
-	socket.on("updateClientGSO", (data) => {
-		console.log(`Updating client GSO`);
-		gso.setGameStateJSON(data);
-		appWindow.webContents.send("GSO", gso.getGameState());
-	});
-
-	socket.on("startGameClient", (data) => {
-		console.log(`Starting client game`);
-		appWindow.loadURL("file://" + __dirname + "/index.html");
+	client.changeState("CONNECT", {});
 	
-		// send the GSO once the window is ready
-		appWindow.webContents.once('did-finish-load', function() {
-			appWindow.webContents.send('GSO', gso.getGameState());
-		});
+	// send the GSO once the window is ready
+	appWindow.webContents.once('did-finish-load', function() {
+		appWindow.webContents.send('GSO', gso.getGameState());
 	});
+
 });
 
 // start a hosted game
 ipc.on('HOSTSTART', function(event, players) {
+
+	/*
 	gso = new GameState(players);
 
 	if(socket != null) 
@@ -142,14 +103,19 @@ ipc.on('HOSTSTART', function(event, players) {
 		console.log(data);
 		socket.emit("startGameServer", data);
 	}
+	*/
+
 });
 
 // end the server script for a hosted game
 ipc.on('HOSTEND', function(event, {}) {
+
+	/*
 	console.log(`Cancelling new hosted game`);
 	socket.disconnect();
 
 	// TODO KILL the MotherF&#%er child process because server is still running if the host hits the back button
+	*/
 });
 
 // ----------------------------------------------------------------------------
@@ -159,80 +125,59 @@ ipc.on('HOSTEND', function(event, {}) {
 // draw
 ipc.on('DRAW', function(event, data) {
 
-	// if the draw was good
-	if(gso.drawCard(data)) {
+	client.handleAction("DRAW", data);
+	event.sender.send("GSO", client.requestGameState());
 
-		// go to place
-		gso.nextPhase();
-	}
+	//if(socket != null)
+		//socket.emit("updateServerGSO", gso.getGameStateJSON());
 
-	event.sender.send("GSO", gso.getGameState());
-	if(socket != null)
-		socket.emit("updateServerGSO", gso.getGameStateJSON());
 });
 
 // place
 ipc.on("PLACE", function(event, data) {
 
-	// if the place was good
-	if(gso.placeCard(data.player, data.x, data.y)) {
-		
-		// go to lure
-		gso.nextPhase();
-		
-	}
-	event.sender.send("GSO", gso.getGameState());
-	if(socket != null)
-		socket.emit("updateServerGSO", gso.getGameStateJSON());
+	client.handleAction("PLACE", data);
+	event.sender.send("GSO", client.requestGameState());
+
+	//if(socket != null)
+	//	socket.emit("updateServerGSO", gso.getGameStateJSON());
 });
 
 // lure
 ipc.on('LURE', function(event, data) {
 
-	// if the lure was good
-	if(gso.placeLure(data.player, data.x, data.y)) {
+	client.handleAction("LURE", data);
+	event.sender.send("GSO", client.requestGameState());
 
-		// go to shipsfly, or back to draw for next player
-		gso.nextPhase();
-	}
-
-	event.sender.send("GSO", gso.getGameState());
-	if(socket != null)
-		socket.emit("updateServerGSO", gso.getGameStateJSON());
+	//if(socket != null)
+	//	socket.emit("updateServerGSO", gso.getGameStateJSON());
 });
 
 ipc.on('SHIPSFLY', function(event, data) {
-	// fly the ships, and set's the phase to SCORING
-	gso.nextPhase();
+	
+	client.handleAction("SHIPSFLY", data);
+	event.sender.send("GSO", client.requestGameState());
 
-	// let front end know the current phase
-	event.sender.send("GSO", gso.getGameState());
 });
 
 ipc.on('SCORING', function(event, data) {
-	// score, and set phase to SHIPSFLEE
-	gso.nextPhase();
+	
+	client.handleAction("SCORING", data);
+	event.sender.send("GSO", client.requestGameState());
 
-	// let front end know the current phase
-	event.sender.send("GSO", gso.getGameState());
 });
 
 ipc.on('SHIPSFLEE', function(event, data) {
-	// flee, and set phase to DRAW or END
-	gso.nextPhase();
 
-	// let front end know the current phase
-	event.sender.send("GSO", gso.getGameState());
+	client.handleAction("SHIPSFLEE", data);
+	event.sender.send("GSO", client.requestGameState());
+
 });
 
 // reset
-ipc.on('RESET', function(event, {}) {
+ipc.on('RESET', function(event, data) {
 
-	console.log("\n\n****************************");
-	console.log("***** GAME RESET STATE *****");
-	console.log("****************************\n\n");
-
-	gso = new GameState(2);
-	event.sender.send("GSO", gso.getGameState());
+	client.handleAction("RESET", data);
+	event.sender.send("GSO", client.requestGameState());
 
 });
