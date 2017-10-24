@@ -9,14 +9,8 @@ var ipc = electron.ipcMain;
 
 let gso = {};
 let appWindow;
-
-// server
-const server = require("http").createServer();
-const io_server = require("socket.io")(server);
-const io_client = require("socket.io-client");
-const fs = require("fs");
-
-let socket = io_client("http://");
+var socket = null;
+var server = null;
 
 let gState = {
     pCount: 0,
@@ -78,33 +72,90 @@ ipc.on('HOTSEAT', function(event, players) {
 // connect to an existing hosted game via ip address
 ipc.on('CONNECT', function(event, ip) {
 	console.log(`Connecting to ${ip}`);
-	socket = io_client("http://localhost:3000");
+	const io_client = require("socket.io-client");
+	socket = io_client.connect('http://localhost:3000');
+	gso = new GameState(2);
+
+	socket.on("updateState", (event, data) => {
+	
+	    console.log(event);
+	    console.log(data);
+	    appWindow.webContents.send("playerUpdate", data.pCount);
+	});
+
+	socket.on("updateClientGSO", (data) => {
+		console.log(`Updating client GSO ${data}`);
+		gso.setGameStateJSON(data);
+		appWindow.webContents.send("GSO", gso.getGameState());
+	});
+
+	socket.on("startGameClient", (data) => {
+		console.log(`Starting client game`);
+		appWindow.loadURL("file://" + __dirname + "/index.html");
+	
+		// send the GSO once the window is ready
+		appWindow.webContents.once('did-finish-load', function() {
+			appWindow.webContents.send('GSO', gso.getGameState());
+		});
+	});
 });
 
 // begin server script for hosting a game
 // output the current number of players to lobby
 ipc.on('HOST', function(event, {}) {
 	console.log(`Hosting a new game`);
-	server.listen(3000);
-	socket = io_client("http://localhost:3000");
+
+	// server
+	const io_client = require("socket.io-client");
+	spawn = require('child_process').spawn;
+	server = spawn('node', ['server.js'], { detached : true });
+
+	// client
+	socket = io_client.connect('http://localhost:3000');
+
+	socket.on("updateState", (event, data) => {
+	
+	    console.log(event);
+	    console.log(data);
+	    console.log(data.pCount);
+		appWindow.webContents.send("playerUpdate", data.pCount);
+	});
+
+	socket.on("updateClientGSO", (data) => {
+		console.log(`Updating client GSO`);
+		gso.setGameStateJSON(data);
+		appWindow.webContents.send("GSO", gso.getGameState());
+	});
+
+	socket.on("startGameClient", (data) => {
+		console.log(`Starting client game`);
+		appWindow.loadURL("file://" + __dirname + "/index.html");
+	
+		// send the GSO once the window is ready
+		appWindow.webContents.once('did-finish-load', function() {
+			appWindow.webContents.send('GSO', gso.getGameState());
+		});
+	});
 });
 
 // start a hosted game
 ipc.on('HOSTSTART', function(event, players) {
 	gso = new GameState(players);
 
-	appWindow.loadURL("file://" + __dirname + "/index.html");
-	
-	// send the GSO once the window is ready
-	appWindow.webContents.once('did-finish-load', function() {
-		appWindow.webContents.send('GSO', gso.getGameState());
-	});
+	if(socket != null) 
+	{
+		var data = gso.getGameStateJSON();
+		console.log(data);
+		socket.emit("startGameServer", data);
+	}
 });
 
 // end the server script for a hosted game
 ipc.on('HOSTEND', function(event, {}) {
 	console.log(`Cancelling new hosted game`);
-	server.close();
+	socket.disconnect();
+
+	// TODO KILL the MotherF&#%er child process.
 });
 
 // ----------------------------------------------------------------------------
@@ -122,6 +173,8 @@ ipc.on('DRAW', function(event, data) {
 	}
 
 	event.sender.send("GSO", gso.getGameState());
+	if(socket != null)
+		socket.emit("updateServerGSO", gso.getGameStateJSON());
 });
 
 // place
@@ -135,6 +188,8 @@ ipc.on("PLACE", function(event, data) {
 		
 	}
 	event.sender.send("GSO", gso.getGameState());
+	if(socket != null)
+		socket.emit("updateServerGSO", gso.getGameStateJSON());
 });
 
 // lure
@@ -148,6 +203,8 @@ ipc.on('LURE', function(event, data) {
 	}
 
 	event.sender.send("GSO", gso.getGameState());
+	if(socket != null)
+		socket.emit("updateServerGSO", gso.getGameStateJSON());
 });
 
 ipc.on('SHIPSFLY', function(event, data) {
@@ -185,120 +242,3 @@ ipc.on('RESET', function(event, {}) {
 	event.sender.send("GSO", gso.getGameState());
 
 });
-
-// ----------------------------------------------------------------------------
-// Client
-// ----------------------------------------------------------------------------
-socket.on("updateState", (event, data) => {
-	
-    console.log(event);
-    console.log(data);
-
-});
-
-// ----------------------------------------------------------------------------
-// Server
-// ----------------------------------------------------------------------------
-
-io_server.on("connection", (socket) => {
-
-    console.log("Connection found: " + socket.id);
-    printIds(io_server.sockets.connected);
-
-    if (!addPlayer(gState, socket.id)) {
-        console.log("Player slots full...");
-        // TODO disconnect the connection
-    } else {
-        io_server.emit("updateState", "connected", gState);
-    }
-
-    socket.on("disconnect", (reason) => {
-        
-        removePlayer(gState, socket.id);
-        console.log("Disconnection: " + socket.id + " - " + reason);
-        printIds(io_server.sockets.connected);
-
-        io_server.emit("updateState", "disconnected", gState);   
-
-    });
-
-    socket.on("fetchState", (event, data) => {
-        
-        console.log("fetch state...");
-        socket.emit("updateState", "connected", gState);
-    
-    });
-
-});
-
-function printIds(clients) {
-    
-        console.log("*** Connected Clients ***")    
-        
-        for (id in clients) {
-            console.log("\t" + id);
-        }
-        
-        console.log("*************************\n")
-        
-    }
-    
-function addPlayer(gState, id) {
-
-    if (gState.pCount <= 3) {
-        
-        gState.pCount++;
-
-        if (gState.p1_id === null) {
-            gState.p1_id = id;
-            return true;
-        }
-
-        if (gState.p2_id === null) {
-            gState.p2_id = id;
-            return true;
-        }
-
-        if (gState.p3_id === null) {
-            gState.p3_id = id;
-            return true;
-        }
-
-        if (gState.p4_id === null) {
-            gState.p4_id = id;
-            return true;
-        }
-
-    }
-    
-    return false;
-
-}
-
-function removePlayer(gState, id) {
-
-    if (gState.pCount > 0) {
-        
-        gState.pCount--;
-
-        if (gState.p1_id === id) {
-            gState.p1_id = null;
-            return;
-        }
-
-        if (gState.p2_id === id) {
-            gState.p2_id = null;
-            return;
-        }
-
-        if (gState.p3_id === id) {
-            gState.p3_id = null;
-            return;
-        }
-
-        if (gState.p4_id === id) {
-            gState.p4_id = null;
-            return;
-        }
-    }
-}

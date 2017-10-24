@@ -48,16 +48,7 @@ h1 {
 	display: none;
 }
 
-#connect-to-ip {
-	padding-top: 10px;
-	margin-top: 20px;
-	padding-bottom: 10px;
-	height: auto;
-	line-height: 100%;
-	font-size: 36px;
-}
-
-#hotseat-player-count {
+#connect-to-ip, #hotseat-player-count, #client-waiting-message {
 	padding-top: 10px;
 	margin-top: 20px;
 	padding-bottom: 10px;
@@ -98,4 +89,8 @@ h1 {
 
 #connect:active {
 	background-color: #fff;
+}
+
+#client-waiting-message {
+	display: none;
 }

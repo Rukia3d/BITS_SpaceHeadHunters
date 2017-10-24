@@ -33,13 +33,27 @@ class GameState {
 
 	}
 
-	setGameState(gso) {
+	setGameStateJSON(gameStateJSON) {
 
-		this.deck = gso.deck;
-		this.board = gso.board;
-		this.players = gso.players;
-		this.phase = gso.phase;
-		this.player = gso.player;
+		this.deck.cards = gameStateJSON.cards;
+		this.deck.usedCards = gameStateJSON.cards;
+		this.board.tiles = gameStateJSON.tiles;
+		this.board.ships = gameStateJSON.ships;
+		this.players = gameStateJSON.players;
+		this.phase = gameStateJSON.phase;
+		this.player = gameStateJSON.player;
+	}
+
+	getGameStateJSON() {
+		return {
+			"cards" : this.deck.cards,
+			"usedCards" : this.deck.usedCards,
+			"tiles" : this.board.tiles,
+			"ships" : this.board.ships,
+			"players" : this.players,
+			"phase" : this.phase,
+			"player" : this.player
+		};
 	}
 
 	setPlayerIndex(index) {

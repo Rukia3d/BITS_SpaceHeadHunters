@@ -31,6 +31,8 @@ var lobbyBtn = document.getElementById('lobby-btn');
 // lobby
 var lobbyBack = document.getElementById('lobby-back');
 var hostStart = document.getElementById('host-start');
+var clientWaiting = document.getElementById('client-waiting-message');
+var playerCount = document.getElementById('network-player-count')
 
 //-----------------------------------------------------------------------------
 // HOTSEAT
@@ -113,6 +115,10 @@ connect.onclick = function(e)
 					document.getElementById('ip-3').value + "." + 
 					document.getElementById('ip-4').value;
 	ipcRenderer.send('CONNECT', ipAddress);
+	networkPanel.style.display = 'none';
+	lobbyPanel.style.display = 'block';
+	hostStart.style.display = 'none';
+	clientWaiting.style.display = 'block';
 }
 
 //-----------------------------------------------------------------------------
@@ -131,8 +137,9 @@ lobbyBack.onclick = function(e)
 // LOBBY Host
 hostStart.onclick = function(e) 
 {
+	var players = parseInt(playerCount.innerHTML);
 	e.preventDefault();
-	ipcRenderer.send('HOSTSTART', {});
+	ipcRenderer.send('HOSTSTART', players);
 }
 
 //-----------------------------------------------------------------------------
@@ -161,3 +168,8 @@ exit.onclick = function(e)
 	e.preventDefault();
 	ipcRenderer.send('EXIT', {});
 }
+
+ipcRenderer.on('playerUpdate', (event, arg) => {
+  	console.log(arg);
+	playerCount.innerHTML = arg;
+});
