@@ -21,11 +21,6 @@ function renderPlayers(gameState){
 function renderPlayer(player, active, element, gamestate){
 	//Clear the area for drawing
 	element.innerHTML = "";
-
-	var p1 = document.getElementById("player1");
-	var p2 = document.getElementById("player2");
-	var p3 = document.getElementById("player3");
-	var p4 = document.getElementById("player4");
 	
 	//Checks for player
 	if (player == null){
@@ -43,23 +38,9 @@ function renderPlayer(player, active, element, gamestate){
 	//Render players name
 	function renderPlayerName(){
 		var elementH = document.createElement("h3");	
-			
-		if (element === p1){
-			p1.appendChild(elementH);
-
-		}else if (element === p2){
-			p2.appendChild(elementH);
-
-		}else if (element === p3){
-			p3.appendChild(elementH);
-
-		}else if (element === p4){
-			p4.appendChild(elementH);
-			
-		}
+		element.appendChild(elementH);
 		var playerName = document.createTextNode(element.id);			
-		elementH.appendChild(playerName);
-			
+		elementH.appendChild(playerName);		
 	}
 
 	//render avatar
@@ -86,16 +67,16 @@ function renderPlayer(player, active, element, gamestate){
 		activeScore.innerHTML = score;
 		activeScore.appendChild(scorenumber);
 				
-		if(element === p1){								
+		if(element === player1){								
 			scorenumber.innerHTML = gamestate.players[0].score;
 
-		}else if(element === p2){					
+		}else if(element === player2){					
 			scorenumber.innerHTML = gamestate.players[1].score;
 					
-		}else if(element === p3){
+		}else if(element === player3){
 			scorenumber.innerHTML = gamestate.players[2].score;
 	
-		}else if (element === p4){
+		}else if (element === player4){
 			scorenumber.innerHTML = gamestate.players[3].score;
 			
 		}
