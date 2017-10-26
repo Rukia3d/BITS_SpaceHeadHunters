@@ -17,18 +17,73 @@ function renderPlayers(gameState){
 	renderPlayer(gameState.players[3],gameState.player==3, p4div, gameState);
 }
 
-// Josh, here's the player's part
+// Render each player on screen
 function renderPlayer(player, active, element, gamestate){
 	//Clear the area for drawing
 	element.innerHTML = "";
-	//If there's no player - render an empty div with id = element
-	//If we have a player
-		//render h3 name
-		//render avatar
-		//render status line
-		//render score
-		//render action area
+	
+	//Checks for player
+	if (player == null){
+		document.createElement("div");
+		id = element;
+		
+	}else{
+		renderPlayerName();
+		renderAvatar();
+		renderStatusLine()
+		renderActiveScore();	
 		renderActionArea(player, active, element, gamestate);
+		}
+
+	//Render players name
+	function renderPlayerName(){
+		var elementH = document.createElement("h3");	
+		element.appendChild(elementH);
+		var playerName = document.createTextNode(element.id);			
+		elementH.appendChild(playerName);		
+	}
+
+	//render avatar
+	function renderAvatar() {
+		var avatar = document.createElement("div");
+		avatar.className = "avatar";
+		element.appendChild(avatar);
+	}
+
+	//render status line
+	function renderStatusLine(){
+		var statusLine = document.createElement("div");
+		statusLine.className = "statusline";
+		element.appendChild(statusLine);
+	}
+
+	//Render players score
+	function renderActiveScore() {
+		var activeScore = document.createElement("div");
+		activeScore.className = ("scorearea");
+		var score = "Score";
+		var scorenumber = document.createElement("span");
+		scorenumber.className = ("scorenumber");
+		activeScore.innerHTML = score;
+		activeScore.appendChild(scorenumber);
+				
+		if(element === player1){								
+			scorenumber.innerHTML = gamestate.players[0].score;
+
+		}else if(element === player2){					
+			scorenumber.innerHTML = gamestate.players[1].score;
+					
+		}else if(element === player3){
+			scorenumber.innerHTML = gamestate.players[2].score;
+	
+		}else if (element === player4){
+			scorenumber.innerHTML = gamestate.players[3].score;
+			
+		}
+		element.appendChild(activeScore);
+			 
+	}
+	
 }
 
 function renderActionArea(player, active, element, gamestate){
