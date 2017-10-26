@@ -311,3 +311,9 @@ ipcRenderer.on('GSO', (event, arg) => {
   }
 
 })
+
+ipcRenderer.on("HOST_START", (event, data) => {
+
+	console.log("HOST_START recieved");
+
+});

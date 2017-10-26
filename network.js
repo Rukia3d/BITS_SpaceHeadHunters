@@ -1,52 +1,76 @@
-const client_io = require("socket.io-client");
-
 class network {
 
-    constructor() {
+    constructor(clientRef) {
         
-        this.server_io = null;
-        this.client_io = null;
         this.socket    = null;
+        this.client    = clientRef;
+
+        this.connectedPlayers = {
+            p1_id: null,
+            p2_id: null,
+            p3_id: null,
+            p4_id: null,
+            pCount: 0
+        };
         
     }
 
-    startClient(host) {
+   
 
-        //this.socket = client_io(host);
+    connect() {
 
-        console.log(`Connecting to ${host}`);
-        socket = client.io.connect(host);
+        const client_io = require("socket.io-client");
+        this.socket = client_io('http://localhost:3000');
 
-        socket.on("updateState", (event, data) => {
+        this.socket.on("updateState", (event, data) => {
             
             console.log(event);
             console.log(data);
-            appWindow.webContents.send("playerUpdate", data.pCount);
 
         });
 
-        socket.on("updateClientGSO", (data) => {
+       
+    }
 
-            console.log(`Updating client GSO ${data}`);
-            gso.setGameStateJSON(data);
-            appWindow.webContents.send("GSO", gso.getGameState());
+    host() {
+         
+        const server = require("http").createServer();
+        const io     = require("socket.io")(server);
 
-        });
+        server.listen(3000);
+        console.log("server listening?");
 
-        socket.on("startGameClient", (data) => {
+        // new gamestate etc..
+
+        io.on("connection", (socket) => {
             
-            console.log(`Starting client game`);
-            appWindow.loadURL("file://" + __dirname + "/index.html");
-        
-            // send the GSO once the window is ready
-            appWindow.webContents.once('did-finish-load', function() {
-                appWindow.webContents.send('GSO', gso.getGameState());
-            });
+            console.log("Connection found: " + socket.id);
+            logConnectionIds(io.sockets.connected);
 
+            // add to this.connectedPlayers...
+        
         });
+
+        // handle disconnects...
 
     }
 
+    sendAction() {
+        ;
+    }
+
+}
+
+function logConnectionIds(clients) {
+    
+    console.log("*** Connected Clients ***");   
+    
+    for (id in clients) {
+        console.log("\t" + id);
+    }
+    
+    console.log("*************************\n");
+    
 }
 
 module.exports = network;

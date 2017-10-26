@@ -8,13 +8,13 @@ class Client {
         this.gso = {};
         this.socket = null;
         this.server = null;
-        this.net = new network();
+        this.net = new network(this);
 
         this.state = "mainmenu";
 
         this.menuCallBack = null;
         this.gameCallBack = null;
-        //this.updateCallBack = null;
+        this.updateCallBack = null;
 
     }
 
@@ -26,9 +26,9 @@ class Client {
         this.gameCallBack = gameCallBack;
     }
 
-    //attachUpdateCallBack(updateCallBack) {
-    //    this.updateCallBack = updateCallBack;
-    //}
+    attachUpdateCallBack(updateCallBack) {
+        this.updateCallBack = updateCallBack;
+    }
 
     changeState(newState, data) {
 
@@ -44,75 +44,18 @@ class Client {
                 break;
 
             case "CONNECT":
-                /*
-                console.log(`Connecting to ${ip}`);
-                const io_client = require("socket.io-client");
-                socket = io_client.connect('http://localhost:3000');
-                gso = new GameState(2);
 
-                socket.on("updateState", (event, data) => {
-                
-                    console.log(event);
-                    console.log(data);
-                    appWindow.webContents.send("playerUpdate", data.pCount);
-                });
-
-                socket.on("updateClientGSO", (data) => {
-                    console.log(`Updating client GSO ${data}`);
-                    gso.setGameStateJSON(data);
-                    appWindow.webContents.send("GSO", gso.getGameState());
-                });
-
-                socket.on("startGameClient", (data) => {
-                    console.log(`Starting client game`);
-                    appWindow.loadURL("file://" + __dirname + "/index.html");
-                
-                
-                });
-                */
+                this.net.connect();
 
                 break;
 
             case "HOST":
-                /*
-                console.log(`Hosting a new game`);
             
-                const server = require("http").createServer();
-                const io     = require(socket.io)(server);
-            
-                const io_client = require("socket.io-client");
-                io_client.connect('http://localhost:3000');
+                this.net.host();
+                this.updateCallBack("HOST_START", {});
+                break;               
 
-                // server
-                const io_client = require("socket.io-client");
-                spawn = require('child_process').spawn;
-                server = spawn('node', ['server.js'], { detached : true });
-            
-                // client
-                socket = io_client.connect('http://localhost:3000');
-            
-                socket.on("updateState", (event, data) => {
-                
-                    console.log(event);
-                    console.log(data);
-                    console.log(data.pCount);
-            
-                    // updates the lobby section in menu.html via main-menu.js
-                    appWindow.webContents.send("playerUpdate", data.pCount);
-                });
-            
-                socket.on("updateClientGSO", (data) => {
-                    console.log(`Updating client GSO`);
-                    gso.setGameStateJSON(data);
-                    appWindow.webContents.send("GSO", gso.getGameState());
-                });
-            
-                socket.on("startGameClient", (data) => {
-                    console.log(`Starting client game`);
-                    appWindow.loadURL("file://" + __dirname + "/index.html");
-                */
-                
-                break;
+               
 
         }
 
@@ -120,55 +63,73 @@ class Client {
 
     handleAction(action, data) {
 
-        //console.log(action);
+        if (this.state === "HOTSEAT") {
+            switch (action) {
 
-        switch (action) {
+                case "DRAW":
+                    // if the draw was good
+                    if(this.gso.drawCard(data)) {
+                        // go to place
+                        this.gso.nextPhase();
+                    }
+                    break;
 
-            case "DRAW":
-                // if the draw was good
-                if(this.gso.drawCard(data)) {
-                    // go to place
+                case "PLACE":
+                    // if the place was good
+                    if(this.gso.placeCard(data.player, data.x, data.y)) {
+                        // go to lure
+                        this.gso.nextPhase();
+                    }
+                    break;
+
+                case "LURE":
+                    // if the lure was good
+                    if(this.gso.placeLure(data.player, data.x, data.y)) {                    
+                        // go to shipsfly, or back to draw for next player
+                        this.gso.nextPhase();
+                    }
+                    break;
+
+                case "SHIPSFLY":
+                case "SCORING":
+                case "SHIPSFLEE":
                     this.gso.nextPhase();
-                }
-                break;
+                    //this.updateCallBack();
+                    break;
 
-            case "PLACE":
-                // if the place was good
-                if(this.gso.placeCard(data.player, data.x, data.y)) {
-                    // go to lure
-                    this.gso.nextPhase();
-                }
-                break;
-
-            case "LURE":
-                // if the lure was good
-                if(this.gso.placeLure(data.player, data.x, data.y)) {                    
-                    // go to shipsfly, or back to draw for next player
-                    this.gso.nextPhase();
-                }
-                break;
-
-            case "SHIPSFLY":
-            case "SCORING":
-            case "SHIPSFLEE":
-                this.gso.nextPhase();
-                //this.updateCallBack();
-                break;
-
-            case "RESET":
-            
-                //TODO Transition back to main menu...
-                //menuCallBack();
-                //gso = new GameState(2);
-                break;
+                case "RESET":
                 
+                    //TODO Transition back to main menu...
+                    //menuCallBack();
+                    //gso = new GameState(2);
+                    break;
+                    
 
+            }
+        }
+
+        if (this.state === "CONNECT") {
+            switch (action) {
+                
+                case "DRAW":
+                case "PLACE":
+                case "LURE":                
+                    net.sendAction(action);
+                    break;
+
+            }
         }
 
     }
 
     requestGameState() {
         return this.gso.getGameState();
+    }
+
+    handleHostGSO(gso) {
+
+        console.log("I should be a gamestate object from the host");
+
     }
 
 }

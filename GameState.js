@@ -10,12 +10,12 @@ class GameState {
 
 	constructor(numPlayers) {
 
-		this.deck = new Deck(deckData);
+		this.deck     = new Deck(deckData);
 		this.deck.shuffle();
-		this.board = new Board(this.deck);
-		this.players = new Array();
-		this.phase = "DRAW";
-		this.player = 0;
+		this.board    = new Board(this.deck);
+		this.players  = new Array();
+		this.phase    = "DRAW";
+		this.player   = 0;
 		this.addPlayers(numPlayers);
 		
 	}

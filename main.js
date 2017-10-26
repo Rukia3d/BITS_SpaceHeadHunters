@@ -18,8 +18,11 @@ function gameCallBack() {
 	appWindow.loadURL("file://" + __dirname + "/index.html");	
 }
 
-function sendGameState() {
-	appWindow.webContents.send("GSO", client.requestGameState());
+function updateCallBack(event, data) {
+	console.log("calling back?");
+	console.log(event);
+	console.log(data);
+	appWindow.webContents.send("HOST_START", data);	
 }
 
 // ----------------------------------------------------------------------------
@@ -42,7 +45,7 @@ app.on("ready", function() {
 	appWindow.loadURL("file://" + __dirname + "/menu.html");
 	client.attachGameCallBack(gameCallBack);
 	client.attachMenuCallBack(menuCallBack);
-	//client.attachUpdateCallBack(sendGameState);
+	client.attachUpdateCallBack(updateCallBack);
 
 	appWindow.once("ready-to-show", function() {
 		appWindow.show();
@@ -90,7 +93,8 @@ ipc.on('CONNECT', function(event, ip) {
 // output the current number of players to lobby
 ipc.on('HOST', function(event, {}) {
 	
-	client.changeState("CONNECT", {});
+	client.changeState("HOST", {});
+	appWindow.webContents.send("HOST_START", {});
 	
 	// send the GSO once the window is ready
 	//appWindow.webContents.once('did-finish-load', function() {
