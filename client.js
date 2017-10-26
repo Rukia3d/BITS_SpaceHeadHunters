@@ -14,6 +14,7 @@ class Client {
 
         this.menuCallBack = null;
         this.gameCallBack = null;
+        //this.updateCallBack = null;
 
     }
 
@@ -24,6 +25,10 @@ class Client {
     attachGameCallBack(gameCallBack) {
         this.gameCallBack = gameCallBack;
     }
+
+    //attachUpdateCallBack(updateCallBack) {
+    //    this.updateCallBack = updateCallBack;
+    //}
 
     changeState(newState, data) {
 
@@ -147,6 +152,7 @@ class Client {
             case "SCORING":
             case "SHIPSFLEE":
                 this.gso.nextPhase();
+                //this.updateCallBack();
                 break;
 
             case "RESET":

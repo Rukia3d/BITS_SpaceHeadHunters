@@ -131,8 +131,10 @@ class GameState {
 				this.phase = "LURE";
 				break;
 			case "LURE":
-				if(this.player == this.players.length - 1)
+				if(this.player == this.players.length - 1) {
 					this.phase = "SHIPSFLY";
+					console.log("SHIPS FLYING");			
+				}		
 				else {
 					this.phase = "DRAW";
 					this.player++;

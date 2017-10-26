@@ -18,13 +18,18 @@ function gameCallBack() {
 	appWindow.loadURL("file://" + __dirname + "/index.html");	
 }
 
+function sendGameState() {
+	appWindow.webContents.send("GSO", client.requestGameState());
+}
+
 // ----------------------------------------------------------------------------
 // Window Creation
 // ----------------------------------------------------------------------------
 app.on("ready", function() {
 
 	appWindow = new BrowserWindow({
-
+		x: -1000,
+		y: 0,
 		width: 950,
 		height: 750,
 		backgroundColor: '#006282',
@@ -32,9 +37,12 @@ app.on("ready", function() {
 		show: false
 	});
 
+	appWindow.maximize();
+	appWindow.webContents.openDevTools();
 	appWindow.loadURL("file://" + __dirname + "/menu.html");
 	client.attachGameCallBack(gameCallBack);
 	client.attachMenuCallBack(menuCallBack);
+	//client.attachUpdateCallBack(sendGameState);
 
 	appWindow.once("ready-to-show", function() {
 		appWindow.show();
