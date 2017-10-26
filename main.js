@@ -85,9 +85,9 @@ ipc.on('HOST', function(event, {}) {
 	client.changeState("CONNECT", {});
 	
 	// send the GSO once the window is ready
-	appWindow.webContents.once('did-finish-load', function() {
-		appWindow.webContents.send('GSO', gso.getGameState());
-	});
+	//appWindow.webContents.once('did-finish-load', function() {
+	//	appWindow.webContents.send('GSO', gso.getGameState());
+	//});
 
 });
 

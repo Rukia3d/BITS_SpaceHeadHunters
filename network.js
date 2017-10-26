@@ -7,9 +7,7 @@ class network {
         this.server_io = null;
         this.client_io = null;
         this.socket    = null;
-
-        console.log("network init");
-
+        
     }
 
     startClient(host) {

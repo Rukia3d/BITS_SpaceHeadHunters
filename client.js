@@ -27,80 +27,88 @@ class Client {
 
     changeState(newState, data) {
 
-        // only transition from mainmenu...
-        if (newState === "HOTSEAT") {
-
-            console.log(`Starting a new hotseat game with ${data.players} players`);
-            this.state = newState;
-            this.gso = new GameState(data.players);
-            this.gameCallBack();
-
-        } else if (newState === "CONNECT") {
-            /*
-            console.log(`Connecting to ${ip}`);
-            const io_client = require("socket.io-client");
-            socket = io_client.connect('http://localhost:3000');
-            gso = new GameState(2);
-
-            socket.on("updateState", (event, data) => {
+        switch (newState) {
             
-                console.log(event);
-                console.log(data);
-                appWindow.webContents.send("playerUpdate", data.pCount);
-            });
+            case "HOTSEAT":
 
-            socket.on("updateClientGSO", (data) => {
-                console.log(`Updating client GSO ${data}`);
-                gso.setGameStateJSON(data);
-                appWindow.webContents.send("GSO", gso.getGameState());
-            });
+                console.log(`Starting a new hotseat game with ${data.players} players`);
+                this.state = newState;
+                this.gso = new GameState(data.players);
+                this.gameCallBack();
 
-            socket.on("startGameClient", (data) => {
-                console.log(`Starting client game`);
-                appWindow.loadURL("file://" + __dirname + "/index.html");
-            
-              
-            });
-            */
-        } else if (newState === "HOST") {
-            /*
-            console.log(`Hosting a new game`);
-        
-            const server = require("http").createServer();
-            const io     = require(socket.io)(server);
-        
-            const io_client = require("socket.io-client");
-            io_client.connect('http://localhost:3000');
+                break;
 
-            // server
-            const io_client = require("socket.io-client");
-            spawn = require('child_process').spawn;
-            server = spawn('node', ['server.js'], { detached : true });
-        
-            // client
-            socket = io_client.connect('http://localhost:3000');
-        
-            socket.on("updateState", (event, data) => {
-            
-                console.log(event);
-                console.log(data);
-                console.log(data.pCount);
-        
-                // updates the lobby section in menu.html via main-menu.js
-                appWindow.webContents.send("playerUpdate", data.pCount);
-            });
-        
-            socket.on("updateClientGSO", (data) => {
-                console.log(`Updating client GSO`);
-                gso.setGameStateJSON(data);
-                appWindow.webContents.send("GSO", gso.getGameState());
-            });
-        
-            socket.on("startGameClient", (data) => {
-                console.log(`Starting client game`);
-                appWindow.loadURL("file://" + __dirname + "/index.html");
-            */
+            case "CONNECT":
+                /*
+                console.log(`Connecting to ${ip}`);
+                const io_client = require("socket.io-client");
+                socket = io_client.connect('http://localhost:3000');
+                gso = new GameState(2);
+
+                socket.on("updateState", (event, data) => {
                 
+                    console.log(event);
+                    console.log(data);
+                    appWindow.webContents.send("playerUpdate", data.pCount);
+                });
+
+                socket.on("updateClientGSO", (data) => {
+                    console.log(`Updating client GSO ${data}`);
+                    gso.setGameStateJSON(data);
+                    appWindow.webContents.send("GSO", gso.getGameState());
+                });
+
+                socket.on("startGameClient", (data) => {
+                    console.log(`Starting client game`);
+                    appWindow.loadURL("file://" + __dirname + "/index.html");
+                
+                
+                });
+                */
+
+                break;
+
+            case "HOST":
+                /*
+                console.log(`Hosting a new game`);
+            
+                const server = require("http").createServer();
+                const io     = require(socket.io)(server);
+            
+                const io_client = require("socket.io-client");
+                io_client.connect('http://localhost:3000');
+
+                // server
+                const io_client = require("socket.io-client");
+                spawn = require('child_process').spawn;
+                server = spawn('node', ['server.js'], { detached : true });
+            
+                // client
+                socket = io_client.connect('http://localhost:3000');
+            
+                socket.on("updateState", (event, data) => {
+                
+                    console.log(event);
+                    console.log(data);
+                    console.log(data.pCount);
+            
+                    // updates the lobby section in menu.html via main-menu.js
+                    appWindow.webContents.send("playerUpdate", data.pCount);
+                });
+            
+                socket.on("updateClientGSO", (data) => {
+                    console.log(`Updating client GSO`);
+                    gso.setGameStateJSON(data);
+                    appWindow.webContents.send("GSO", gso.getGameState());
+                });
+            
+                socket.on("startGameClient", (data) => {
+                    console.log(`Starting client game`);
+                    appWindow.loadURL("file://" + __dirname + "/index.html");
+                */
+                
+                break;
+
         }
 
     }
