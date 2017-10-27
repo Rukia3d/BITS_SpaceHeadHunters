@@ -1,9 +1,13 @@
+const clientEventBus = require("./event.js");
+const client_io      = require("socket.io-client");
+const server_io      = require("http").createServer();
+
 class network {
 
-    constructor(clientRef) {
+    constructor() {
         
-        this.socket    = null;
-        this.client    = clientRef;
+        this.server = null;
+        this.client = null;
 
         this.connectedPlayers = {
             p1_id: null,
@@ -15,48 +19,71 @@ class network {
         
     }
 
-   
-
     connect() {
 
-        const client_io = require("socket.io-client");
-        this.socket = client_io('http://localhost:3000');
+        this.client = client_io('http://localhost:3000');
 
-        this.socket.on("updateState", (event, data) => {
+        this.client.on("updateState", (event, data) => {
             
+            console.log(`${this.client.id} recieved update`);
             console.log(event);
-            console.log(data);
 
         });
 
-       
+        this.client.on("playerUpdate", (event, data) => {
+
+            clientEventBus.emit("NEW_CONNECTION", event);            
+
+        });
+
+        this.client.on("hostStart", (event, data) => {
+            
+            //clientEventBus.emit("updateGameState", event);
+            clientEventBus.emit("REND_TO_INDEX");
+            clientEventBus.emit("updateGameState", event);
+
+        });
+
     }
 
     host() {
          
-        const server = require("http").createServer();
-        const io     = require("socket.io")(server);
+        this.server = require("socket.io")(server_io);        
+        this.server.listen(3000);
+        console.log("server listening on 3000");
 
-        server.listen(3000);
-        console.log("server listening?");
-
-        // new gamestate etc..
-
-        io.on("connection", (socket) => {
-            
+        this.server.on("connection", (socket) => {
+                        
             console.log("Connection found: " + socket.id);
-            logConnectionIds(io.sockets.connected);
+            logConnectionIds(this.server.sockets.connected);
 
-            // add to this.connectedPlayers...
-        
+            this.connectedPlayers.pCount++;
+
+            if (!this.connectedPlayers.p1_id)
+                this.connectedPlayers.p1_id = socket.id;
+            else if (!this.connectedPlayers.p2_id)
+                this.connectedPlayers.p2_id = socket.id;
+            else if (!this.connectedPlayers.p3_id)
+                this.connectedPlayers.p3_id = socket.id;
+            else if (!this.connectedPlayers.p4_id)
+                this.connectedPlayers.p4_id = socket.id;
+            else
+                ;
+                // TODO Disconnect client
+
+            clientEventBus.emit("NEW_CONNECTION", this.connectedPlayers.pCount);
+            this.server.emit("playerUpdate", this.connectedPlayers.pCount);
+                
         });
 
         // handle disconnects...
 
     }
 
-    sendAction() {
-        ;
+    sendGSO(event, gso) {
+
+        this.server.emit(event, gso);
+
     }
 
 }

@@ -1,5 +1,6 @@
 let GameState = require("./GameState.js");
 let network = require("./network.js");
+const clientEventBus = require("./event.js");
 
 class Client {
 
@@ -8,7 +9,7 @@ class Client {
         this.gso = {};
         this.socket = null;
         this.server = null;
-        this.net = new network(this);
+        this.net = new network();
 
         this.state = "mainmenu";
 
@@ -16,48 +17,43 @@ class Client {
         this.gameCallBack = null;
         this.updateCallBack = null;
 
-    }
-
-    attachMenuCallBack(menuCallBack) {
-        this.menuCallBack = menuCallBack;
-    }
-
-    attachGameCallBack(gameCallBack) {
-        this.gameCallBack = gameCallBack;
-    }
-
-    attachUpdateCallBack(updateCallBack) {
-        this.updateCallBack = updateCallBack;
-    }
-
-    changeState(newState, data) {
-
-        switch (newState) {
+        clientEventBus.on("CHANGE_STATE", (state, data) => {
             
-            case "HOTSEAT":
+            switch (state) {
+                
+                case "HOTSEAT":
+    
+                    console.log(`Starting a new hotseat game with ${data} players`);
+                    this.state = state;
+                    this.gso = new GameState(data);
+                    clientEventBus.emit("REND_TO_INDEX");
+    
+                    break;
+    
+                case "CONNECT":
+    
+                    this.state = state;            
+                    this.net.connect();
+    
+                    break;
+    
+                case "HOST":
+                
+                    console.log("hosting a network game, starting gamestate and server")
+                    this.state = state; 
+                    this.gso = new GameState(data);           
+                    this.net.host();
+                    break;               
+            }
 
-                console.log(`Starting a new hotseat game with ${data.players} players`);
-                this.state = newState;
-                this.gso = new GameState(data.players);
-                this.gameCallBack();
+        });
 
-                break;
+        clientEventBus.on("HOSTSTART", () => {
 
-            case "CONNECT":
+            clientEventBus.emit("REND_TO_INDEX");
+            this.net.sendGSO("hostStart", this.gso.getGameState());            
 
-                this.net.connect();
-
-                break;
-
-            case "HOST":
-            
-                this.net.host();
-                this.updateCallBack("HOST_START", {});
-                break;               
-
-               
-
-        }
+        });
 
     }
 
@@ -123,12 +119,10 @@ class Client {
     }
 
     requestGameState() {
-        return this.gso.getGameState();
-    }
 
-    handleHostGSO(gso) {
-
-        console.log("I should be a gamestate object from the host");
+        if (this.state !== "CONNECT") {
+            return this.gso.getGameState();
+        }
 
     }
 
