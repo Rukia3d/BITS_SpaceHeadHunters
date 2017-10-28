@@ -7,15 +7,9 @@ class Client {
     constructor() {
 
         this.gso = {};
-        this.socket = null;
-        this.server = null;
         this.net = new network();
 
         this.state = "mainmenu";
-
-        this.menuCallBack = null;
-        this.gameCallBack = null;
-        this.updateCallBack = null;
 
         clientEventBus.on("CHANGE_STATE", (state, data) => {
             
@@ -33,7 +27,7 @@ class Client {
                 case "CONNECT":
     
                     this.state = state;            
-                    this.net.connect();
+                    this.net.connect(data);
     
                     break;
     
@@ -120,9 +114,7 @@ class Client {
 
     requestGameState() {
 
-        if (this.state !== "CONNECT") {
-            return this.gso.getGameState();
-        }
+        return this.gso.getGameState();
 
     }
 

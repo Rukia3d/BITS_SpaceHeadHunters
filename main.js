@@ -66,11 +66,6 @@ ipc.on('CONNECT', function(event, ip) {
 
 	clientEventBus.emit("CHANGE_STATE", "CONNECT", {"ip": ip});
 	
-	// send the GSO once the window is ready
-	appWindow.webContents.once('did-finish-load', function() {
-		appWindow.webContents.send('GSO', client.requestGameState());
-	});
-	
 });
 
 // begin server script for hosting a game

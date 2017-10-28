@@ -19,8 +19,11 @@ class network {
         
     }
 
-    connect() {
+    connect(ip) {
 
+        console.log(ip);
+        // TODO Set to localhost for testing, replace with ip data
+        // TODO if connection fails, display "no server found at ip:port"..?
         this.client = client_io('http://localhost:3000');
 
         this.client.on("updateState", (event, data) => {
