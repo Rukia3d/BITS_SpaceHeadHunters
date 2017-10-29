@@ -162,7 +162,8 @@ function drawCard(gameState, x, y, cell){
 	var card = cards[0];
 
 	if(card){
-		cell.innerHTML = card.type;
+		// cell.innerHTML = card.type;
+		cell.className += ' ' + card.type;
 	}
 }
 
@@ -170,7 +171,11 @@ function drawShips(gameState, x, y, cell){
 	var ships = findByXY(gameState.board.ships, x, y);
 
 	if(ships.length>0){
-		cell.innerHTML += " "+ships.length;
+		// cell.innerHTML += " "+ships.length;
+		for(var i = 0; i < ships.length; ++i)
+		{
+			cell.innerHTML += " <div class='ship-wrap'><div class='ship'></div></div>";	
+		}
 	}
 }
 
@@ -268,6 +273,7 @@ function displayAvailableSpots(gameState){
 	available.forEach(function(spot){
 		var cell = document.querySelector('[data-x="'+spot.x+'"][data-y="'+spot.y+'"]');
 		cell.innerHTML = "A";
+		cell.className += " card-available";
 		cell.onclick = function(){
 			sendEvent(gameState.phase, {
 				player: gameState.player, 
@@ -284,6 +290,7 @@ function displayAvailableLure(gameState){
 	available.forEach(function(card){
 		var cell = document.querySelector('[data-x="'+card.x+'"][data-y="'+card.y+'"]');
 		cell.innerHTML += " "+"L";
+		cell.className += " lure-available";
 		cell.onclick = function(){
 			sendEvent(gameState.phase, {
 				player: gameState.player, 
