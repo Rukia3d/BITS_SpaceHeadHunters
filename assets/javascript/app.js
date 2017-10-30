@@ -1,5 +1,6 @@
 const {ipcRenderer} = require('electron');
 const rows = 9, cols = 9;
+var previousGameState = null;
 
 function renderPlayers(gameState){
 	// Render players individualy using the gameState data.
@@ -170,11 +171,10 @@ function drawCard(gameState, x, y, cell){
 function drawShips(gameState, x, y, cell){
 	var ships = findByXY(gameState.board.ships, x, y);
 
-	if(ships.length>0){
+	if(ships.length > 0){
 		// cell.innerHTML += " "+ships.length;
-		for(var i = 0; i < ships.length; ++i)
-		{
-			cell.innerHTML += " <div class='ship-wrap'><div class='ship'></div></div>";	
+		for(var i = 0; i < ships.length; ++i) {
+			cell.innerHTML += ` <div class='ship-wrap'><div class='ship' id='${"ship-" + ships[i].id}'></div></div>`;	
 		}
 	}
 }
@@ -304,15 +304,152 @@ function displayAvailableLure(gameState){
 
 ipcRenderer.on('GSO', (event, arg) => {
   console.log(event, arg) // helper, prints objects to use
+
+  // animate, then render the final state
+  	if(arg.phase == "SCORING") {
+		moveShips(arg);
+	}
+	
+
   renderBoard(arg); // render the board from gamestate
   renderPlayers(arg); // render both players from gamestate
 
+  previousGameState = arg;
+
   switch (arg.phase) {
-	  case "SHIPSFLY":
-	  case "SCORING":
-	  case "SHIPSFLEE":
-		  sendEvent(arg.phase, arg);
-		  break;
-  }
+		  case "SHIPSFLY":
+		  case "SCORING":
+		  case "SHIPSFLEE":
+			  	sendEvent(arg.phase, arg);
+			  	break;
+	}
   
-})
+});
+
+// ============================================================================
+// ANIMATION STUFF
+// ============================================================================
+
+function moveShips(gameState) {
+	/*
+	// make sure we're using proper data
+	if(previousGameState) {
+
+		for(var i = 0; i < previousGameState.board.ships.length; ++i)
+		{
+
+			var oldShip = previousGameState.board.ships[i];
+			var newShip = findShipById(gameState, oldShip.id);
+
+
+			if(oldShip.x != newShip.x || oldShip.y != newShip.y) {
+
+				console.log(`Ship #${oldShip.id} moving from (${oldShip.x}, ${oldShip.y}) to (${newShip.x}, ${newShip.y})`);
+				
+				// get the old ship element positions
+				var startPosition = document.querySelector('[data-x="'+oldShip.x+'"][data-y="'+oldShip.y+'"]');
+				var startRect = startPosition.getBoundingClientRect();
+
+				// get the new ship element positions.
+				var endPosition = document.querySelector('[data-x="'+newShip.x+'"][data-y="'+newShip.y+'"]');
+				var endRect = endPosition.getBoundingClientRect();
+
+				// the actual element to move
+				var element = document.getElementById('ship-'+oldShip.id);
+
+				// vertical animation first
+				if(startRect.top != endRect.top) {
+
+					var start = startRect.top;
+					var end = endRect.top;
+
+					// if we're increasing position
+					if(startRect.top < endRect.top) {
+						function animateDown() {
+							if(start <= end) {
+								element.style.top = end + 'px';
+							}
+							else {
+								console.log(start);
+								start--;
+								element.style.top = start + 'px';
+								requestAnimationFrame(animateDown(element, start, end));
+							}
+						}
+						requestAnimationFrame(animateDown);
+					}
+
+					// if we're decreasing
+					else {
+						function animateUp() {
+
+							if(start >= end) {
+								element.style.top = end + 'px';
+							}
+							else {
+								console.log(start);
+								start++;
+								element.style.top = start + 'px';
+								requestAnimationFrame(animateUp(element, start, end));
+							}
+						}
+						requestAnimationFrame(animateUp);
+
+					}
+				}
+
+				// then horizontal animation
+				if(startRect.left != endRect.left) {
+
+					var start = startRect.left;
+					var end = endRect.left;
+
+					// if we're increasing position
+					if(startRect.left > endRect.left) {
+						function animateLeft() {
+							if(start <= end) {
+								element.style.top = end + 'px';
+							}
+							else {
+								console.log(start);
+								start--;
+								element.style.top = start + 'px';
+								requestAnimationFrame(animateLeft);
+							}
+						}
+						requestAnimationFrame(animateLeft);
+					}
+
+					// if we're decreasing
+					else {
+						function animateRight() {
+							if(start >= end) {
+								element.style.top = end + 'px';
+							}
+							else {
+								console.log(start);
+								start++;
+								element.style.top = start + 'px';
+								requestAnimationFrame(animateRight);
+							}
+						}
+						requestAnimationFrame(animateRight(element, start, end));
+					}
+				}
+			}
+		}
+	}
+	*/
+}
+
+
+function findShipById(gameState, id) {
+	for(var i = 0; i < gameState.board.ships.length; ++i)
+	{
+		if(gameState.board.ships[i].id == id)
+		{
+			return gameState.board.ships[i];
+		}
+	}
+	return null;
+}

@@ -1,10 +1,11 @@
 class Board {
 
+
     constructor(deck) {
 
         this.tiles = new Array();
         this.ships = new Array();
-
+        this.idCount = 0;
         this.initBoard(deck);
         this.initShips();
 
@@ -54,7 +55,7 @@ class Board {
     placeShip(x, y) {
         
         this.tiles.forEach(function(i) {
-    
+
             if (i.x === x && i.y === y) {
                 
                 if (i.type.substring(0, 4) === "gate") {
@@ -63,7 +64,8 @@ class Board {
         
                     for(var j = 0; j < numShips; ++j) {
         
-                        this.ships.push({ "x" : i.x, "y" : i.y });
+                        this.ships.push({ "x" : i.x, "y" : i.y, "id" : this.idCount });
+                        this.idCount++;
                     }
         
                 }
@@ -110,6 +112,20 @@ class Board {
 
     }
 
+    getShipIdsOnTile(x, y) {
+
+        var ids = new Array();
+
+        this.ships.forEach(function(i) {
+        
+            if (i.x === x && i.y === y)
+                ids.push(i.id);
+
+        }, this);
+
+        return ids;
+    }
+
     scatter() {
         
         // all ships on one tile = shipGroup
@@ -118,9 +134,10 @@ class Board {
         this.tiles.forEach(function(i) {
         
             let shipCount = this.numShipsOnTile(i.x, i.y);
+            let ids = this.getShipIdsOnTile(i.x, i.y);
 
             if (shipCount > 0)
-                shipGroups.push({ "num": shipCount, "x": i.x, "y": i.y});
+                shipGroups.push({ "num": shipCount, "x": i.x, "y": i.y, "ids" : ids });
             
             
         }, this);
@@ -176,6 +193,7 @@ class Board {
                 // starting point is the shipGroup's tile
                 var x = shipGroups[j].x;
                 var y = shipGroups[j].y;
+                var ids = shipGroups[j].ids;
 
                 console.log(`Need to scatter ${shipsToScatter} ships`);
 
@@ -195,7 +213,7 @@ class Board {
 
                                 // place a ship if so
                                 console.log(`Scattering one ship to ( ${x}, ${y} ) - ${k - 1} ships left to scatter...\n`);
-                                this.ships.push({ "x" : x, "y" : y });
+                                this.ships.push({ "x" : x, "y" : y, "id" : ids.pop() });
 
                                 // decrement the ships
                                 --k;
@@ -286,10 +304,11 @@ class Board {
         for(var i = 0; i < this.tiles.length; ++i) {
 
             var shipCount = this.numShipsOnTile(this.tiles[i].x, this.tiles[i].y);
+            var shipIds = this.getShipIdsOnTile(this.tiles[i].x, this.tiles[i].y);
 
             if(shipCount > 0) {
 
-                shipGroups.push({ "num" : shipCount, "x" : this.tiles[i].x, "y" : this.tiles[i].y });
+                shipGroups.push({ "num" : shipCount, "x" : this.tiles[i].x, "y" : this.tiles[i].y, "ids" : shipIds });
             }
         }
 
@@ -394,11 +413,11 @@ class Board {
                 
                 if(pub != null) {
 
-                    newShipGroups.push({ "num" : numShipsPerLure, "x" : pub.x,  "y" : pub.y });
+                    newShipGroups.push({ "num" : numShipsPerLure, "x" : pub.x,  "y" : pub.y, "ids": shipGroups[k].ids });
                 }
                 else {
 
-                    newShipGroups.push({ "num" : numShipsPerLure, "x" : axisLures[0].x,  "y" : axisLures[0].y });
+                    newShipGroups.push({ "num" : numShipsPerLure, "x" : axisLures[0].x,  "y" : axisLures[0].y, "ids": shipGroups[k].ids });
                 }
             }
 
@@ -438,11 +457,11 @@ class Board {
 
                         if(pub != null) {
 
-                            newShipGroups.push({ "num" : numShipsPerLure, "x" : pub.x,  "y" : pub.y });
+                            newShipGroups.push({ "num" : numShipsPerLure, "x" : pub.x,  "y" : pub.y, "ids" : shipGroups[k].ids.splice(0, numShipsPerLure) });
                         }
                         else {
 
-                            newShipGroups.push({ "num" : numShipsPerLure, "x" : cruiserLures[v].x,  "y" : cruiserLures[v].y });
+                            newShipGroups.push({ "num" : numShipsPerLure, "x" : cruiserLures[v].x,  "y" : cruiserLures[v].y, "ids" : shipGroups[k].ids.splice(0, numShipsPerLure) });
                         }
                     }
                 }
@@ -460,11 +479,11 @@ class Board {
 
                             if(pub != null) {
 
-                                newShipGroups.push({ "num" : numShipsPerLure, "x" : pub.x,  "y" : pub.y });
+                                newShipGroups.push({ "num" : numShipsPerLure, "x" : pub.x,  "y" : pub.y, "ids" : shipGroups[k].ids.splice(0, numShipsPerLure) });
                             }
                             else {
 
-                                newShipGroups.push({ "num" : numShipsPerLure, "x" : axisLures[v].x,  "y" : axisLures[v].y });
+                                newShipGroups.push({ "num" : numShipsPerLure, "x" : axisLures[v].x,  "y" : axisLures[v].y, "ids" : shipGroups[k].ids.splice(0, numShipsPerLure) });
                             }
                         }
                         else if(axisLures[v].axis == "x") {
@@ -473,23 +492,23 @@ class Board {
 
                             if(pub != null) {
 
-                                newShipGroups.push({ "num" : numShipsPerLure, "x" : pub.x,  "y" : pub.y });
+                                newShipGroups.push({ "num" : numShipsPerLure, "x" : pub.x,  "y" : pub.y, "ids" : shipsGroups[k].ids.splice(0, numShipsPerLure) });
                             }
                             else {
 
-                                newShipGroups.push({ "num" : numShipsPerLure, "x" : axisLures[v].x,  "y" : axisLures[v].y });
+                                newShipGroups.push({ "num" : numShipsPerLure, "x" : axisLures[v].x,  "y" : axisLures[v].y, "ids" : shipGroups[k].ids.splice(0, numShipsPerLure) });
                             }
                         }
                     }
                 }
                 // keep the ships were they were i.e. they weren't evenly divisible
                 else {
-                    newShipGroups.push({ "num" : shipGroups[k].num, "x" : shipGroups[k].x,  "y" : shipGroups[k].y });
+                    newShipGroups.push({ "num" : shipGroups[k].num, "x" : shipGroups[k].x,  "y" : shipGroups[k].y, "ids" : shipGroups[k].ids });
                 }
             }
             // there were no valid lures, so don't move the ships
             else {
-                newShipGroups.push({ "num" : shipGroups[k].num, "x" : shipGroups[k].x,  "y" : shipGroups[k].y });
+                newShipGroups.push({ "num" : shipGroups[k].num, "x" : shipGroups[k].x,  "y" : shipGroups[k].y, "ids" : shipGroups[k].ids });
             }
         }
         // newShipGroups contains the entire boards' new shipGroups even if they haven't moved
@@ -501,7 +520,7 @@ class Board {
 
             for(var k = 0;  k < newShipGroups[i].num; ++k) {
 
-                this.ships.push({ "x" : newShipGroups[i].x, "y" : newShipGroups[i].y });
+                this.ships.push({ "x" : newShipGroups[i].x, "y" : newShipGroups[i].y, "id": newShipGroups[i].ids[k] });
             }
         }
     }
@@ -650,7 +669,8 @@ class Board {
                 
                 for(var j = 0; j < numShips; ++j) {
 
-                    this.ships.push({ "x" : i.x, "y" : i.y });
+                    this.ships.push({ "x" : i.x, "y" : i.y, "id" : this.idCount });
+                    this.idCount++;
                 }
 
             }
