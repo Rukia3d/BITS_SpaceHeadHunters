@@ -39,12 +39,14 @@ class network {
 
         });
 
-        this.client.on("hostStart", (event, data) => {
-            
-            //clientEventBus.emit("updateGameState", event);
-            clientEventBus.emit("REND_TO_INDEX");
-            clientEventBus.emit("updateGameState", event);
+        this.client.on("HOSTSTART", (event, data) => {
+        /*
+         *  Client has recieved HOSTSTART, will attempt to change to index.html
+         *  and process recieved GSO (passed in as event)
+         */
 
+            clientEventBus.emit("UPDATE_GSO", event);
+            
         });
 
     }
@@ -85,8 +87,15 @@ class network {
 
     sendGSO(event, gso) {
 
+        console.log("sending GSO...");
+        console.log(event);
+        console.log(gso);
         this.server.emit(event, gso);
 
+    }
+
+    getPlayerCount() {
+        return this.connectedPlayers.pCount;
     }
 
 }

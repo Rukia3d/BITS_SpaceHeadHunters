@@ -162,6 +162,10 @@ clientEventBus.on("REND_TO_INDEX", () => {
 	
 	appWindow.loadURL("file://" + __dirname + "/index.html");
 
+	appWindow.webContents.once('did-finish-load', function() {
+		appWindow.webContents.send('GSO', client.requestGameState());
+	});	
+
 });
 
 clientEventBus.on("REND_DO_UPDATE", () => {
@@ -181,4 +185,22 @@ clientEventBus.on("updateGameState", (event) => {
 
 	appWindow.webContents.send("GSO", event);
 
+	console.log ("sending GSO to renderer");
+	console.log (event);
+
 });
+
+clientEventBus.on("UPDATE_GSO", (event) => {
+	
+	console.log("sending rec'd GSO from host to front end..")
+	console.log(event);
+
+	appWindow.loadURL("file://" + __dirname + "/index.html");
+	
+	appWindow.webContents.once('did-finish-load', function() {
+		appWindow.webContents.send('GSO', event);
+	});	
+	
+	
+});
+	

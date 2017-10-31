@@ -173,3 +173,24 @@ ipcRenderer.on('playerUpdate', (event, arg) => {
   	console.log(arg);
 	playerCount.innerHTML = arg;
 });
+
+ipcRenderer.on('GSO', (event, arg) => {
+	/*
+	console.log(event, arg) // helper, prints objects to use
+	renderBoard(arg); // render the board from gamestate
+	renderPlayers(arg); // render both players from gamestate
+  
+	switch (arg.phase) {
+  
+	  case "SHIPSFLY":
+	  case "SCORING":
+	  case "SHIPSFLEE":
+		  sendEvent(arg.phase, arg);
+		  break;
+  
+	}
+	*/
+
+	console.log("GAME START WHAT");
+  
+  })

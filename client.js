@@ -35,7 +35,7 @@ class Client {
                 
                     console.log("hosting a network game, starting gamestate and server")
                     this.state = state; 
-                    this.gso = new GameState(data);           
+                    //this.gso = new GameState(//);           
                     this.net.host();
                     break;               
             }
@@ -44,8 +44,10 @@ class Client {
 
         clientEventBus.on("HOSTSTART", () => {
 
+            console.log(`Hosting a network game with ${this.net.getPlayerCount() + 1} players`);
+            this.gso = new GameState(this.net.getPlayerCount() + 1);
             clientEventBus.emit("REND_TO_INDEX");
-            this.net.sendGSO("hostStart", this.gso.getGameState());            
+            this.net.sendGSO("HOSTSTART", this.gso.getGameState());
 
         });
 

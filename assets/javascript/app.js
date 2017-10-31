@@ -295,7 +295,7 @@ function displayAvailableLure(gameState){
 }
 
 
-ipcRenderer.on('GSO', (event, arg) => {
+ipcRenderer.on("GSO", (event, arg) => {
   console.log(event, arg) // helper, prints objects to use
   renderBoard(arg); // render the board from gamestate
   renderPlayers(arg); // render both players from gamestate
@@ -311,9 +311,3 @@ ipcRenderer.on('GSO', (event, arg) => {
   }
 
 })
-
-ipcRenderer.on("HOST_START", (event, data) => {
-
-	console.log("HOST_START recieved");
-
-});
