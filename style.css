@@ -111,7 +111,7 @@ body {
 .player h3{
 	text-align: center;
 	margin: 0 auto;
-	font-size: 36px;
+	font-size: 24px;
 }
 
 .player .avatar{
@@ -205,4 +205,148 @@ body {
 	height: calc(11.11% - 4px);
 	margin: 2px;
 	background-color: rgba(100, 100, 100, 0.7);
+}
+
+/* CELL STYLES */
+
+/* Available Card Spots */
+.card-available {
+	background-color: rgba(150, 200, 0, 0.5) !important;
+	transition: background-color .2s ease-in-out !important;
+}
+
+.card-available:hover {
+	background-color: rgba(150, 200, 0, 0.7) !important;
+}
+
+/* Available Lure Spots */
+/* Had to do a hacky gradient + url image to get desired effect */
+.lure-available.pub {
+	transition: background .2s ease-in-out;
+	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/pub.jpg');
+	background-size: cover;
+}
+
+.lure-available.pub:hover {
+	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/pub.jpg');
+	background-size: cover;
+}
+
+.lure-available.space {
+	transition: background .2s ease-in-out;
+	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/space.jpg');
+	background-size: cover;
+}
+
+.lure-available.space:hover {
+	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/space.jpg');
+	background-size: cover;
+}
+
+.lure-available.lair {
+	transition: background .2s ease-in-out;
+	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/lair.jpg');
+	background-size: cover;
+}
+
+.lure-available.lair:hover {
+	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/lair.jpg');
+	background-size: cover;
+}
+
+.lure-available.gate1 {
+	transition: background .2s ease-in-out;
+	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/gate1.jpg');
+	background-size: cover;
+}
+
+.lure-available.gate1:hover {
+	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/gate1.jpg');
+	background-size: cover;
+}
+
+.lure-available.gate2 {
+	transition: background .2s ease-in-out;
+	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/gate2.jpg');
+	background-size: cover;
+}
+
+.lure-available.gate2:hover {
+	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/gate2.jpg');
+	background-size: cover;
+}
+
+.lure-available.gate3 {
+	transition: background .2s ease-in-out;
+	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/gate3.jpg');
+	background-size: cover;
+}
+
+.lure-available.gate3:hover {
+	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/gate3.jpg');
+	background-size: cover;
+}
+
+.lure-available.cruiser {
+	transition: background .2s ease-in-out;
+	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/cruiser.jpg');
+	background-size: cover;
+}
+
+.lure-available.cruiser:hover {
+	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/cruiser.jpg');
+	background-size: cover;
+}
+
+/* Plain old boring cells */
+.pub {
+	background-image: url('assets/images/pub.jpg');
+	background-size: cover;
+}
+
+.space {
+	background-image: url('assets/images/space.jpg');
+	background-size: cover;
+}
+
+.lair {
+	background-image: url('assets/images/lair.jpg');
+	background-size: cover;
+}
+
+.gate1 {
+	background-image: url('assets/images/gate1.jpg');
+	background-size: cover;
+}
+
+.gate2 {
+	background-image: url('assets/images/gate1.jpg');
+	background-size: cover;
+}
+
+.gate3 {
+	background-image: url('assets/images/gate1.jpg');
+	background-size: cover;
+}
+
+.cruiser {
+	background-image: url('assets/images/cruiser.jpg');
+	background-size: cover;
+}
+
+/* contrast background for the ships */
+.ship-wrap {
+	background-color: rgba(0, 0, 0, 0.3);
+	margin-left: 2px;
+	margin-top: 2px;
+	float: left;
+	width: 20px;
+	height: 20px;
+}
+
+.ship {
+	background: url('assets/images/ship.png') !important;
+	background-size: cover !important;
+	width: 100%;
+	height: 100%;
 }
