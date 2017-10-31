@@ -437,8 +437,8 @@ function shipAnimation(gameState, i) {
 			var element = document.getElementById('ship-'+oldShip.id);
 			
 			// get the old ship element positions
-			var startPosition = document.querySelector('[data-x="'+oldShip.x+'"][data-y="'+oldShip.y+'"]');
-			var startRect = startPosition.getBoundingClientRect();
+			//var startPosition = document.querySelector('[data-x="'+oldShip.x+'"][data-y="'+oldShip.y+'"]');
+			var startRect = element.getBoundingClientRect();
 
 			// get the new ship element positions.
 			var endPosition = document.querySelector('[data-x="'+newShip.x+'"][data-y="'+newShip.y+'"]');
