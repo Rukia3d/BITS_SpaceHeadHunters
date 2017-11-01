@@ -138,8 +138,8 @@ function renderBoard(gameState){
 	element.innerHTML = "";
 
 	// Add all tiles to the board
-	for(var x=0; x<rows; x++){
-		for(var y=0; y<cols; y++){
+	for(var y=0; y<rows; y++){
+		for(var x=0; x<cols; x++){
 			var cell = document.createElement('div');
 			cell.className = 'cell new';
 			cell.dataset.x = x;
@@ -288,7 +288,7 @@ function displayAvailableSpots(gameState){
 	var available = findAvailableSpots(gameState);
 	available.forEach(function(spot){
 		var cell = document.querySelector('[data-x="'+spot.x+'"][data-y="'+spot.y+'"]');
-		cell.innerHTML = "A";
+		// cell.innerHTML = "A";
 		cell.className += " card-available";
 		cell.onclick = function(){
 			sendEvent(gameState.phase, {
@@ -305,7 +305,7 @@ function displayAvailableLure(gameState){
 	var available = findAvailableCards(gameState);
 	available.forEach(function(card){
 		var cell = document.querySelector('[data-x="'+card.x+'"][data-y="'+card.y+'"]');
-		cell.innerHTML += " "+"L";
+		// cell.innerHTML += " "+"L";
 		cell.className += " lure-available";
 		cell.onclick = function(){
 			sendEvent(gameState.phase, {
