@@ -336,8 +336,9 @@ body {
 
 /* contrast background for the ships */
 .ship-wrap {
-	/*background-color: rgba(0, 0, 0, 0.3);*/
-	margin-left: 2px;
+	/*background-color: rgba(1, 1, 1, 0.3);*/
+	margin-left: calc(50% - 31px);
+	margin-right: calc(50% - 31px);
 	margin-top: 2px;
 	width: 62px;
 	height: 62px;
