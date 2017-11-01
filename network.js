@@ -16,6 +16,8 @@ class network {
             p4_id: null,
             pCount: 0
         };
+
+        this.pNum = null;
         
     }
 
@@ -35,6 +37,7 @@ class network {
 
         this.client.on("playerUpdate", (event, data) => {
 
+            clientEventBus.emit("SET_PNUM", event);
             clientEventBus.emit("NEW_CONNECTION", event);            
 
         });
@@ -70,8 +73,6 @@ class network {
                 this.connectedPlayers.p2_id = socket.id;
             else if (!this.connectedPlayers.p3_id)
                 this.connectedPlayers.p3_id = socket.id;
-            else if (!this.connectedPlayers.p4_id)
-                this.connectedPlayers.p4_id = socket.id;
             else
                 ;
                 // TODO Disconnect client

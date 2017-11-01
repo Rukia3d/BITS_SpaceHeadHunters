@@ -55,7 +55,7 @@ ipc.on('HOTSEAT', function(event, players) {
 
 	// send the GSO once the window is ready
 	appWindow.webContents.once('did-finish-load', function() {
-		appWindow.webContents.send('GSO', client.requestGameState());
+		appWindow.webContents.send('GSO', client.getGameState());
 	});
 
 });
@@ -104,7 +104,7 @@ ipc.on('HOSTEND', function(event, {}) {
 ipc.on('DRAW', function(event, data) {
 
 	client.handleAction("DRAW", data);
-	event.sender.send("GSO", client.requestGameState());
+	event.sender.send("GSO", client.getGameState());
 
 });
 
@@ -112,7 +112,7 @@ ipc.on('DRAW', function(event, data) {
 ipc.on("PLACE", function(event, data) {
 
 	client.handleAction("PLACE", data);
-	event.sender.send("GSO", client.requestGameState());
+	event.sender.send("GSO", client.getGameState());
 
 });
 
@@ -120,7 +120,7 @@ ipc.on("PLACE", function(event, data) {
 ipc.on('LURE', function(event, data) {
 
 	client.handleAction("LURE", data);
-	event.sender.send("GSO", client.requestGameState());
+	event.sender.send("GSO", client.getGameState());
 
 	
 });
@@ -128,21 +128,21 @@ ipc.on('LURE', function(event, data) {
 ipc.on('SHIPSFLY', function(event, data) {
 	
 	client.handleAction("SHIPSFLY", data);
-	event.sender.send("GSO", client.requestGameState());
+	event.sender.send("GSO", client.getGameState());
 
 });
 
 ipc.on('SCORING', function(event, data) {
 	
 	client.handleAction("SCORING", data);
-	event.sender.send("GSO", client.requestGameState());
+	event.sender.send("GSO", client.getGameState());
 
 });
 
 ipc.on('SHIPSFLEE', function(event, data) {
 
 	client.handleAction("SHIPSFLEE", data);
-	event.sender.send("GSO", client.requestGameState());
+	event.sender.send("GSO", client.getGameState());
 
 });
 
@@ -150,7 +150,7 @@ ipc.on('SHIPSFLEE', function(event, data) {
 ipc.on('RESET', function(event, data) {
 
 	client.handleAction("RESET", data);
-	event.sender.send("GSO", client.requestGameState());
+	event.sender.send("GSO", client.getGameState());
 
 });
 
@@ -163,7 +163,8 @@ clientEventBus.on("REND_TO_INDEX", () => {
 	appWindow.loadURL("file://" + __dirname + "/index.html");
 
 	appWindow.webContents.once('did-finish-load', function() {
-		appWindow.webContents.send('GSO', client.requestGameState());
+		appWindow.webContents.send("SET_PNUM", client.getPnum());
+		appWindow.webContents.send('GSO', client.getGameState());
 	});	
 
 });
@@ -185,11 +186,9 @@ clientEventBus.on("updateGameState", (event) => {
 
 	appWindow.webContents.send("GSO", event);
 
-	console.log ("sending GSO to renderer");
-	console.log (event);
-
 });
 
+/*
 clientEventBus.on("UPDATE_GSO", (event) => {
 	
 	console.log("sending rec'd GSO from host to front end..")
@@ -203,4 +202,4 @@ clientEventBus.on("UPDATE_GSO", (event) => {
 	
 	
 });
-	
+*/

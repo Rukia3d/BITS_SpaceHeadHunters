@@ -1,6 +1,7 @@
 const {ipcRenderer} = require('electron');
 const rows = 9, cols = 9;
 var previousGameState = null;
+let pNum = null;
 
 function renderPlayers(gameState){
 	// Render players individualy using the gameState data.
@@ -303,10 +304,11 @@ function displayAvailableLure(gameState){
 
 
 ipcRenderer.on("GSO", (event, arg) => {
-  console.log(event, arg) // helper, prints objects to use
+	console.log(event, arg) // helper, prints objects to use
+	console.log(pNum);
 
-  // animate, then render the final state
-  	if(arg.phase == "SCORING") {
+  	// animate, then render the final state
+  	if(arg.phase === "SCORING") {
 		moveShips(arg);
 	}
 	
@@ -453,3 +455,10 @@ function findShipById(gameState, id) {
 	}
 	return null;
 }
+	
+ipcRenderer.on("SET_PNUM", (event, arg) => {
+
+	console.log("setting pNum to " + arg);
+	this.pNum = event;
+
+});

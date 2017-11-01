@@ -10,6 +10,7 @@ class Client {
         this.net = new network();
 
         this.state = "mainmenu";
+        this.pNum = null;
 
         clientEventBus.on("CHANGE_STATE", (state, data) => {
             
@@ -35,7 +36,6 @@ class Client {
                 
                     console.log("hosting a network game, starting gamestate and server")
                     this.state = state; 
-                    //this.gso = new GameState(//);           
                     this.net.host();
                     break;               
             }
@@ -46,8 +46,24 @@ class Client {
 
             console.log(`Hosting a network game with ${this.net.getPlayerCount() + 1} players`);
             this.gso = new GameState(this.net.getPlayerCount() + 1);
-            clientEventBus.emit("REND_TO_INDEX");
+            this.pNum = 0;
+            clientEventBus.emit("REND_TO_INDEX", this.pNum);
             this.net.sendGSO("HOSTSTART", this.gso.getGameState());
+
+        });
+
+        clientEventBus.on("SET_PNUM", (pNum) => {
+            
+            if (this.pNum === null) {
+                this.pNum = pNum;
+                console.log("Client: Recieved pNum " + pNum);
+            }
+        
+        });
+
+        clientEventBus.on("UPDATE_GSO", (event) => {
+            
+            clientEventBus.emit("REND_TO_INDEX", this.pNum);
 
         });
 
@@ -114,10 +130,15 @@ class Client {
 
     }
 
-    requestGameState() {
+    getGameState() {
 
         return this.gso.getGameState();
 
+    }
+
+    getPnum() {
+
+        return this.pNum;
     }
 
 }
