@@ -170,18 +170,35 @@ function drawCard(gameState, x, y, cell){
 
 function drawShips(gameState, x, y, cell){
 	var ships = findByXY(gameState.board.ships, x, y);
+	
+	var shipWrap = document.createElement('div');
+	shipWrap.className = 'ship-wrap';
+	shipWrap.dataset.shipx = x;
+	shipWrap.dataset.shipy = y;
 
-	if(ships.length > 0){
-		for(var i = 0; i < ships.length; ++i) {
-			cell.innerHTML += ` <div class='ship-wrap' id='ship-wrap-${ships[i].id}'><div class='ship' id='${"ship-" + ships[i].id}'></div></div>`;
+	if(ships.length > 0) 
+	{
+		var html = "";
+
+		for(var i = 0; i < ships.length; ++i) 
+		{
+			html += ` <div class='ship' id='${"ship-" + ships[i].id}'></div>`;
 		}
+
+		shipWrap.innerHTML += html;
 	}
+
+	cell.appendChild(shipWrap);
 }
 
 function drawLure(gameState, x, y, cell){
 	var n = checkLure(gameState, x, y);
 	if(n>=0){
-		cell.innerHTML += " P"+n;
+		var style = cell.currentStyle || window.getComputedStyle(cell, false);
+		var bg = style.backgroundImage.slice(4, -1);
+
+		cell.style.background = `url('assets/images/lure${n + 1}.png'), url(${bg})`;
+		cell.style.backgroundSize = '100% 100%';
 	}
 }
 
@@ -424,6 +441,8 @@ function moveShipRight(gameState, element, startTop, endTop, startLeft, endLeft,
 	}
 }
 
+var shipsMovedToTile = new Array();
+
 function shipAnimation(gameState, i) {
 
 	// animate the ships in turn
@@ -434,21 +453,70 @@ function shipAnimation(gameState, i) {
 
 		if(newShip && (oldShip.x != newShip.x || oldShip.y != newShip.y)) 
 		{
+
+			var offsetX = 0;
+			var offsetY = 0;
+
+			if(previousGameState.phase == "SHIPSFLY") 
+			{
+				var newTileShips = 0;
+				var ships = findByXY(gameState.board.ships, newShip.x, newShip.y);
+
+				if(ships.length > 0){
+					for(var j = 0; j < ships.length; ++j) {
+						newTileShips++;
+					}
+				}
+				
+				shipsMovedToTile.push({ "x" : newShip.x, "y" : newShip.y });
+				var currentNewTileShips = 0;
+				if(shipsMovedToTile.length != 0)
+				{
+					for(var k = 0; k < shipsMovedToTile.length; ++k) 
+					{
+						if(shipsMovedToTile[k].x == newShip.x && shipsMovedToTile[k].y == newShip.y)
+							currentNewTileShips++;
+					}
+				}
+				if(currentNewTileShips % 5 == 0) {
+					offsetX += 48;
+				}
+				else if(currentNewTileShips % 4 == 0) {
+					offsetX += 36;
+				}
+				else if(currentNewTileShips % 3 == 0) {
+					offsetX += 24;
+				}
+				else if(currentNewTileShips % 2 == 0) {
+					offsetX += 12;
+				}
+				if(currentNewTileShips >= 6) {
+					offsetY += 12;
+				}
+				if(currentNewTileShips >= 11) {
+					offsetY += 12;
+				}
+				if(currentNewTileShips >= 16) {
+					offsetY += 12;
+				}
+			}
+			
+
 			var element = document.getElementById('ship-'+oldShip.id);
+			element.style.position = "fixed";
 			
 			// get the old ship element positions
-			//var startPosition = document.querySelector('[data-x="'+oldShip.x+'"][data-y="'+oldShip.y+'"]');
 			var startRect = element.getBoundingClientRect();
 
 			// get the new ship element positions.
-			var endPosition = document.querySelector('[data-x="'+newShip.x+'"][data-y="'+newShip.y+'"]');
+			var endPosition = document.querySelector('[data-shipx="'+newShip.x+'"][data-shipy="'+newShip.y+'"]');
 			var endRect = endPosition.getBoundingClientRect();
 
 			var startTop = startRect.top;
 			var startLeft = startRect.left;
 
-			var endTop = endRect.top;
-			var endLeft = endRect.left;
+			var endTop = endRect.top + offsetY;
+			var endLeft = endRect.left + offsetX;
 
 			moveShipUp(gameState, element, startTop, endTop, startLeft, endLeft, i);
 		}
@@ -460,6 +528,7 @@ function shipAnimation(gameState, i) {
 	}
 	else if(i == previousGameState.board.ships.length) {
 
+		shipsMovedToTile.length = 0;
 		previousGameState = gameState;
 		renderBoard(gameState); // render the board from gamestate
   		renderPlayers(gameState); // render both players from gamestate

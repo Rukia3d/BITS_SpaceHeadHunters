@@ -224,132 +224,131 @@ body {
 .lure-available.pub {
 	transition: background .2s ease-in-out;
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/pub.jpg');
-	background-size: cover;
+	background-size: 100% 100%;
 }
 
 .lure-available.pub:hover {
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/pub.jpg');
-	background-size: cover;
+	background-size: 100% 100%;
 }
 
 .lure-available.space {
 	transition: background .2s ease-in-out;
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/space.jpg');
-	background-size: cover;
+	background-size: 100% 100%;
 }
 
 .lure-available.space:hover {
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/space.jpg');
-	background-size: cover;
+	background-size: 100% 100%;
 }
 
 .lure-available.lair {
 	transition: background .2s ease-in-out;
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/lair.jpg');
-	background-size: cover;
+	background-size: 100% 100%;
 }
 
 .lure-available.lair:hover {
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/lair.jpg');
-	background-size: cover;
+	background-size: 100% 100%;
 }
 
 .lure-available.gate1 {
 	transition: background .2s ease-in-out;
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/gate1.jpg');
-	background-size: cover;
+	background-size: 100% 100%;
 }
 
 .lure-available.gate1:hover {
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/gate1.jpg');
-	background-size: cover;
+	background-size: 100% 100%;
 }
 
 .lure-available.gate2 {
 	transition: background .2s ease-in-out;
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/gate2.jpg');
-	background-size: cover;
+	background-size: 100% 100%;
 }
 
 .lure-available.gate2:hover {
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/gate2.jpg');
-	background-size: cover;
+	background-size: 100% 100%;
 }
 
 .lure-available.gate3 {
 	transition: background .2s ease-in-out;
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/gate3.jpg');
-	background-size: cover;
+	background-size: 100% 100%;
 }
 
 .lure-available.gate3:hover {
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/gate3.jpg');
-	background-size: cover;
+	background-size: 100% 100%;
 }
 
 .lure-available.cruiser {
 	transition: background .2s ease-in-out;
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/cruiser.jpg');
-	background-size: cover;
+	background-size: 100% 100%;
 }
 
 .lure-available.cruiser:hover {
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/cruiser.jpg');
-	background-size: cover;
+	background-size: 100% 100%;
 }
 
 /* Plain old boring cells */
 .pub {
-	background-image: url('assets/images/pub.jpg');
-	background-size: cover;
+	background: url('assets/images/pub.jpg');
+	background-size: 100% 100%;
 }
 
 .space {
-	background-image: url('assets/images/space.jpg');
-	background-size: cover;
+	background: url('assets/images/space.jpg');
+	background-size: 100% 100%;
 }
 
 .lair {
-	background-image: url('assets/images/lair.jpg');
-	background-size: cover;
+	background: url('assets/images/lair.jpg');
+	background-size: 100% 100%;
 }
 
 .gate1 {
-	background-image: url('assets/images/gate1.jpg');
-	background-size: cover;
+	background: url('assets/images/gate1.jpg');
+	background-size: 100% 100%;
 }
 
 .gate2 {
-	background-image: url('assets/images/gate1.jpg');
-	background-size: cover;
+	background: url('assets/images/gate1.jpg');
+	background-size: 100% 100%;
 }
 
 .gate3 {
-	background-image: url('assets/images/gate1.jpg');
-	background-size: cover;
+	background: url('assets/images/gate1.jpg');
+	background-size: 100% 100%;
 }
 
 .cruiser {
-	background-image: url('assets/images/cruiser.jpg');
-	background-size: cover;
+	background: url('assets/images/cruiser.jpg');
+	background-size: 100% 100%;
 }
 
 /* contrast background for the ships */
 .ship-wrap {
-	background-color: rgba(0, 0, 0, 0.3);
+	/*background-color: rgba(0, 0, 0, 0.3);*/
 	margin-left: 2px;
 	margin-top: 2px;
-	float: left;
-	width: 20px;
-	height: 20px;
+	width: 62px;
+	height: 62px;
 }
 
 .ship {
 	background: url('assets/images/ship.png') !important;
 	background-size: cover !important;
-	width: 20px;
-	height: 20px;
-	position: fixed;
-	top: inherit;
-	left: inherit;
+	width: 12px;
+	height: 12px;
+	margin: 0;
+	padding: 0;
+	float: left;
 }
