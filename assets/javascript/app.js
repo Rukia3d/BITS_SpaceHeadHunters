@@ -1,10 +1,13 @@
 const {ipcRenderer} = require('electron');
 const rows = 9, cols = 9;
 
-// for animations
+// the previous game state to compare ship positions to current game state.
 var previousGameState = null;
+
+// to track how many ships have been moved to a tile during animation.
+// allows us to offset the ship's position based on how many ships are
+// on the tile (so they're not displayed one on top of another).
 var shipsMovedToTile = new Array();
-var oldShipPos = new Array();
 
 function renderPlayers(gameState){
 	// Render players individualy using the gameState data.
@@ -175,23 +178,33 @@ function drawCard(gameState, x, y, cell){
 function drawShips(gameState, x, y, cell){
 	var ships = findByXY(gameState.board.ships, x, y);
 	
+	// the wrapper for the ships on the tile
 	var shipWrap = document.createElement('div');
 	shipWrap.className = 'ship-wrap';
-	shipWrap.dataset.shipx = x;
-	shipWrap.dataset.shipy = y;
+	shipWrap.dataset.shipx = x; // required for animation destination
+	shipWrap.dataset.shipy = y; // required for animation destination
 
 	if(ships.length > 0) 
 	{
-		var html = "";
-
 		for(var i = 0; i < ships.length; ++i) 
 		{
-			html += ` <div class='ship' id='${"ship-" + ships[i].id}'></div>`;
-		}
+			// create the ship element
+			var ship = document.createElement('div');
 
-		shipWrap.innerHTML += html;
+			// to track start position in animation
+			ship.id = "ship-" + ships[i].id;
+
+			// for css styles
+			ship.className = "ship";
+
+			// required to offset the element when it's position is changed to fixed during animation
+			ship.dataset.tilepos = i + 1; 
+
+			// append the ship
+			shipWrap.appendChild(ship);
+		}		
 	}
-
+	// append the wrapper for all ships
 	cell.appendChild(shipWrap);
 }
 
@@ -327,13 +340,11 @@ ipcRenderer.on('GSO', (event, arg) => {
 	console.log(event, arg) // helper, prints objects to use
 
 	// animate the stages that require animation
-	if(previousGameState && (previousGameState.phase == "SHIPSFLY" || previousGameState.phase == "SHIPSFLEE")) {
-		for(var k = 0; k < previousGameState.board.ships.length; ++k)
-		{
-			var element = document.getElementById('ship-' + previousGameState.board.ships[k].id );
-			var rect = element.getBoundingClientRect();
-			oldShipPos.push({ "left" : rect.left, "top" : rect.top, "id" : previousGameState.board.ships[k].id });
-		}
+	if(previousGameState && (previousGameState.phase == "SHIPSFLY" || previousGameState.phase == "SHIPSFLEE")) 
+	{
+		// alter the ships position property to fixed and apply offsets so they're not overlayed.
+		makeShipsReady(arg);
+		// animate the ships.
 		shipAnimation(arg, 0);
 	}
 	else {
@@ -384,7 +395,7 @@ function moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft,
 				element.style.top= parseInt(startTop) + "px";
 				element.style.left = parseInt(startLeft) + "px";
 			}
-		}, 10);
+		}, 7);
 	}
 
 	// Up Right
@@ -412,7 +423,7 @@ function moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft,
 				element.style.top= parseInt(startTop) + "px";
 				element.style.left = parseInt(startLeft) + "px";
 			}
-		}, 10);
+		}, 7);
 	}
 
 	// Down Left
@@ -440,7 +451,7 @@ function moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft,
 				element.style.top= parseInt(startTop) + "px";
 				element.style.left = parseInt(startLeft) + "px";
 			}
-		}, 10);
+		}, 7);
 	}
 
 	// Down Right
@@ -469,7 +480,7 @@ function moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft,
 				element.style.left = parseInt(startLeft) + "px";
 
 			}
-		}, 10);
+		}, 7);
 	}
 
 	// Left
@@ -489,7 +500,7 @@ function moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft,
 				startLeft--;
 				element.style.left = parseInt(startLeft) + "px";
 			}
-		}, 10);
+		}, 7);
 	}
 
 	// Right
@@ -509,7 +520,7 @@ function moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft,
 				startLeft++;
 				element.style.left = parseInt(startLeft) + "px";
 			}
-		}, 10);
+		}, 7);
 	}
 
 	// Down
@@ -529,7 +540,7 @@ function moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft,
 				startTop++;
 				element.style.top = parseInt(startTop) + "px";
 			}
-		}, 10);
+		}, 7);
 	}
 
 	// Up
@@ -549,7 +560,7 @@ function moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft,
 				startTop--;
 				element.style.top = parseInt(startTop) + "px";
 			}
-		}, 10);
+		}, 7);
 	}
 	else
 	{
@@ -560,117 +571,165 @@ function moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft,
 
 function shipAnimation(gameState, i) {
 
-	// animate the ships in turn
+	// animate the ships in turn start at 0, and increment i once animation is complete.
+	// async programming required us to use callbacks rather than more simple loops.
 	if(i < previousGameState.board.ships.length) 
 	{
 		// the ship objects with x, y, and ID
 		var oldShip = previousGameState.board.ships[i];
 		var newShip = findShipById(gameState, oldShip.id);
 
+		if(newShip)
+		{
+			// the ships on the destination tile
+			// this var is used to determine the last scattering ship
+			var destShips = findByXY(gameState.board.ships, newShip.x, newShip.y);	
+		}
+		
+
+		// case when we're moving the ship to a new tile
 		if(newShip && (oldShip.x != newShip.x || oldShip.y != newShip.y)) 
 		{
-			// ships on tile previously
-			var previousTileShips = 0;
+			// ships on the destination tile previously (for scatter phase)
 			var ships = findByXY(previousGameState.board.ships, newShip.x, newShip.y);
-			if(ships.length > 0){
-				for(var j = 0; j < ships.length; ++j) {
-					previousTileShips++;
+
+			// accumulate ships on the tile previously.
+			if(ships.length > 0)
+			{
+				for(var j = 0; j < ships.length; ++j) 
+				{
+					// this will accumulate all the ships already there
 					shipsMovedToTile.push({ "x" : newShip.x, "y" : newShip.y });
 				}
 			}
 
+			// add the current ship we'll be moving there
 			shipsMovedToTile.push({ "x" : newShip.x, "y" : newShip.y });
 
-			// find the number of ships on the new tile
+			
 			var currentNewTileShips = 0;
+
+			// find the number of ships on the new tile including this one.
 			if(shipsMovedToTile.length != 0)
 			{
 				for(var k = 0; k < shipsMovedToTile.length; ++k) 
 				{
 					if(shipsMovedToTile[k].x == newShip.x && shipsMovedToTile[k].y == newShip.y)
+					{
 						currentNewTileShips++;
+					}
 				}
 			}
 
 			// offset for ship's position on the destination tile.
 			var offsetX = 0;
 			var offsetY = 0;
-			
+
 			// X offsets
-			if(currentNewTileShips % 5 == 0) {
-				offsetX += 48;
+			// using modulo 5 because we're doing rows of 5 ships.
+			if(currentNewTileShips % 5 == 2) 
+			{
+				// position 2, 7, 12, 17...
+				offsetX = 12;
 			}
-			else if(currentNewTileShips % 4 == 0) {
-				offsetX += 36;
+			else if(currentNewTileShips % 5 == 3) 
+			{
+				// position 3, 8, 13, 18...
+				offsetX = 24;
 			}
-			else if(currentNewTileShips % 3 == 0) {
-				offsetX += 24;
+			else if(currentNewTileShips % 5 == 4) 
+			{
+				// position 4, 9, 14, 19...
+				offsetX = 36;
 			}
-			else if(currentNewTileShips % 2 == 0) {
-				offsetX += 12;
+			else if(currentNewTileShips % 5 == 0) 
+			{
+				// position 5, 10, 15, 20...
+				offsetX = 48;
 			}
 
 			// Y offsets
-			if(currentNewTileShips >= 6) {
+			// harder to calculate cleverly...
+			if(currentNewTileShips >= 6) 
+			{
 				offsetY += 12;
 			}
-			if(currentNewTileShips >= 11) {
+			if(currentNewTileShips >= 11) 
+			{
 				offsetY += 12;
 			}
-			if(currentNewTileShips >= 16) {
+			if(currentNewTileShips >= 16) 
+			{
 				offsetY += 12;
 			}				
-						
+			
+			// the actual element to move
 			var element = document.getElementById('ship-'+oldShip.id);
 
-			// get the old ship element positions
+			// the starting positions
 			var startRect = element.getBoundingClientRect();
-			
-			element.style.position = "fixed";
-
-			for(var l = 0; l < oldShipPos.length; ++l)
-			{
-				if(oldShipPos[l].id == oldShip.id)
-				{
-					element.style.top = oldShipPos[l].top + "px";
-					element.style.left = oldShipPos[l].left + "px";
-				}
-			}
-
 			var startTop = startRect.top;
 			var startLeft = startRect.left;
 
-			// get the new ship element positions.
+			// the end positions
 			var endPosition = document.querySelector('[data-shipx="'+newShip.x+'"][data-shipy="'+newShip.y+'"]');
 			var endRect = endPosition.getBoundingClientRect();
+			var endTop = endRect.top + offsetY; // using the offset so we don't overlay the ships
+			var endLeft = endRect.left + offsetX; // using the offset so we don't overlay the ships
 
-			// offsets for ship positions within the tile
-			var endTop = endRect.top + offsetY;
-			var endLeft = endRect.left + offsetX;
-
-			// move it there
+			// animate it
 			moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft, i);
 			
 		}
+		// case when a ship is moving to the same tile and there's only one ship on that tile.
+		// because other cases are already covered by the above condition, this should only
+		// happen when one ship on the scatter phase needs to move to the #1 position on the same tile.
+		else if(newShip && destShips.length == 1)
+		{
+			// the actual element to move
+			var element = document.getElementById('ship-'+oldShip.id);
+
+			// the starting positions
+			var startRect = element.getBoundingClientRect();
+			var startTop = startRect.top;
+			var startLeft = startRect.left;
+
+			// the end positions
+			var endPosition = document.querySelector('[data-shipx="'+newShip.x+'"][data-shipy="'+newShip.y+'"]');
+			var endRect = endPosition.getBoundingClientRect();
+			var endTop = endRect.top; // no offset required since only one ship will land there
+			var endLeft = endRect.left; // no offset required since only one ship will land there
+
+			// animate it
+			moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft, i);
+		}
+		// the ship isn't moving
 		else 
 		{
-			console.log(i);
 			i++;
 			shipAnimation(gameState, i);
 		}
 	}
+	// when we've animated all the ships
 	else if(i == previousGameState.board.ships.length) {
-
+		// clear the array that tracks how many ships have been moved to destination tiles
 		shipsMovedToTile.length = 0;
+
+		// update the game state
 		previousGameState = gameState;
-		renderBoard(gameState); // render the board from gamestate
-  		renderPlayers(gameState); // render both players from gamestate
+
+		// render the final state which should align perfectly with the last frame of animation
+		renderBoard(gameState);
+  		renderPlayers(gameState);
   		
+  		// send the next event if we're on SHIPSFLY, but if we just did SHIPSFLEE
+  		// then the player should send the draw event.
   		if(gameState.phase != "DRAW")
 			sendEvent(gameState.phase, gameState);
 	} 
 }
 
+// finds a ship by the id in the gamestate object
 function findShipById(gameState, id) {
 	for(var i = 0; i < gameState.board.ships.length; ++i)
 	{
@@ -680,4 +739,84 @@ function findShipById(gameState, id) {
 		}
 	}
 	return null;
+}
+
+// modify the css for ships prior to flying.
+// we need a fixed position in order to move the ships to
+// another location.
+function makeShipsReady(gameState) {
+
+	// the ship elements
+	var ships = document.getElementsByClassName('ship');
+
+	for(var i = 0; i < ships.length; ++i)
+	{
+		// make the position fixed
+		ships[i].style.position = 'fixed';
+
+		// get the position attributes - at this stage
+		// the position is inherited from the parent
+		// but all ships will be overlayed on top of each other
+		rect = ships[i].getBoundingClientRect();
+
+		// grab the tile position of each ship (from drawShips function)
+		var pos = parseInt(ships[i].dataset.tilepos);
+		
+		// offset using the tile position so we 
+		// un-overlay the ships
+
+		// x offsets
+		if(pos % 5 == 2) 
+		{
+			ships[i].style.left = (rect.left + 12) + "px";
+		}
+		else if(pos % 5 == 3) 
+		{
+			ships[i].style.left = (rect.left + 24) + "px";
+		}
+		else if(pos % 5 == 4) 
+		{
+			ships[i].style.left = (rect.left + 36) + "px";
+		}
+		else if(pos % 5 == 0) 
+		{
+			ships[i].style.left = (rect.left + 48) + "px";
+		}
+
+		// y offsets
+		if(pos >= 6) 
+		{
+			ships[i].style.top = (rect.top + 12) + "px";
+		}
+		if(pos >= 11) 
+		{
+			ships[i].style.top = (rect.top + 24) + "px";
+		}
+		if(pos >= 16) 
+		{
+			ships[i].style.top = (rect.top + 36) + "px";
+		}
+	}
+
+	// update the image for ships that aren't in the new game state
+	// this occurs on scatter phase when we remove two ships from the board.
+
+	// the old ships
+	var oldShips = previousGameState.board.ships;
+
+	for(var i = 0; i < oldShips.length; ++i)
+	{
+		// the new ship
+		var newShip = findShipById(gameState, oldShips[i].id);
+		
+		// if there's no new ship, then the ship is dead
+		if(!newShip)
+		{
+			// get that ship element
+			var deadShip = document.getElementById('ship-'+oldShips[i].id);
+
+			// update it's image
+			deadShip.style.background = "url('assets/images/shipDead.png')";
+		}
+	}
 }

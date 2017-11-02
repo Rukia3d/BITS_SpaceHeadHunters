@@ -334,7 +334,7 @@ body {
 	background-size: 100% 100%;
 }
 
-/* contrast background for the ships */
+/* contrast background for the ships? */
 .ship-wrap {
 	/*background-color: rgba(1, 1, 1, 0.3);*/
 	margin-left: calc(50% - 31px);
@@ -345,7 +345,7 @@ body {
 }
 
 .ship {
-	background: url('assets/images/ship.png') !important;
+	background: url('assets/images/ship.png');
 	background-size: cover !important;
 	width: 12px;
 	height: 12px;
