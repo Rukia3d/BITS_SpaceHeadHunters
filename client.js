@@ -61,12 +61,6 @@ class Client {
         
         });
 
-        clientEventBus.on("UPDATE_GSO", (event) => {
-            
-            clientEventBus.emit("REND_TO_INDEX", this.pNum);
-
-        });
-
     }
 
     handleAction(action, data) {
@@ -114,18 +108,31 @@ class Client {
                     
 
             }
+
+            clientEventBus.emit("updateGameState", this.gso.getGameState());
+
         }
 
         if (this.state === "CONNECT") {
-            switch (action) {
-                
-                case "DRAW":
-                case "PLACE":
-                case "LURE":                
-                    net.sendAction(action);
-                    break;
 
+            if (this.pNum === 0) {
+                
+                console.log("I AM A SERVER QUACK");
+                // update gso
+
+            } else {
+
+                switch (action) {
+                    
+                    case "DRAW":
+                    case "PLACE":
+                    case "LURE":                
+                        this.net.sendAction(action);
+                        break;
+
+                }
             }
+
         }
 
     }

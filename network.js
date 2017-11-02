@@ -48,7 +48,7 @@ class network {
          *  and process recieved GSO (passed in as event)
          */
 
-            clientEventBus.emit("UPDATE_GSO", event);
+            clientEventBus.emit("CONNECT_REND_TO_INDEX", event);
             
         });
 
@@ -79,8 +79,16 @@ class network {
 
             clientEventBus.emit("NEW_CONNECTION", this.connectedPlayers.pCount);
             this.server.emit("playerUpdate", this.connectedPlayers.pCount);
+
+            socket.on("ACTION", (action) => {
+                
+                console.log("SERVER: Recieved action!");
+    
+            });
                 
         });
+
+       
 
         // handle disconnects...
 
@@ -97,6 +105,14 @@ class network {
 
     getPlayerCount() {
         return this.connectedPlayers.pCount;
+    }
+
+    sendAction(action) {
+
+        console.log("sending action");
+        console.log(action);
+        this.client.emit("ACTION", action);
+
     }
 
 }

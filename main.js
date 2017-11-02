@@ -104,7 +104,7 @@ ipc.on('HOSTEND', function(event, {}) {
 ipc.on('DRAW', function(event, data) {
 
 	client.handleAction("DRAW", data);
-	event.sender.send("GSO", client.getGameState());
+	//event.sender.send("GSO", client.getGameState());
 
 });
 
@@ -188,18 +188,13 @@ clientEventBus.on("updateGameState", (event) => {
 
 });
 
-/*
-clientEventBus.on("UPDATE_GSO", (event) => {
+clientEventBus.on("CONNECT_REND_TO_INDEX", (event, data) => {
 	
-	console.log("sending rec'd GSO from host to front end..")
-	console.log(event);
-
 	appWindow.loadURL("file://" + __dirname + "/index.html");
 	
 	appWindow.webContents.once('did-finish-load', function() {
+		appWindow.webContents.send("SET_PNUM", client.getPnum());
 		appWindow.webContents.send('GSO', event);
 	});	
 	
-	
 });
-*/
