@@ -9,7 +9,7 @@ class Board {
         this.initBoard(deck);
         this.initShips();
 
-	}
+    }
     
     /* PUBLIC INTERFACE */
     placeCard(crd, x, y) {
@@ -73,8 +73,37 @@ class Board {
             }
     
         }, this);
-        
-        
+        this.sortShips();        
+    }
+
+    // animations require the pub ships to be first ships to be moved.
+    // ships can move both from and to a pub tile during the animation phase.
+    // Because ship position on tile is determined by the new gamestate object
+    // if the pub ships move last - then any ships going TO the pub tile will
+    // move to position 0, and position 1 etc, temporarily overlaying
+    // the ships that will shortly move FROM the pub tile
+    // Quickest solution is to always move ships FROM the pub tile first
+    // and the quickest way to do that is to ensure the sort order of the array so that
+    // the pub ships appear as the first elements.
+
+    sortShips() {
+
+        var otherShips = new Array();
+        var pubShips = new Array();
+
+        for(var i = 0; i < this.ships.length; ++i)
+        {
+            var tile = this.getTile(this.ships[i].x, this.ships[i].y);
+
+            if(tile.type == 'pub') {
+                pubShips.push(this.ships[i]);
+            }
+            else {
+                otherShips.push(this.ships[i]);
+            }
+        }
+
+        this.ships = pubShips.concat(otherShips);
     }
 
     getTiles() {
@@ -276,7 +305,7 @@ class Board {
         }, this);
 
         this.ships = newShips;
-
+        this.sortShips();
     }
 
     shipsFly(players) {
@@ -452,7 +481,7 @@ class Board {
                         }
                         else {
 
-                            pub = this.getPubInPathY(shipGroups[k].x, cruiserLures[v].x, cruiserLures[v].y);	
+                            pub = this.getPubInPathY(shipGroups[k].x, cruiserLures[v].x, cruiserLures[v].y);    
                         }
 
                         if(pub != null) {
@@ -523,6 +552,7 @@ class Board {
                 this.ships.push({ "x" : newShipGroups[i].x, "y" : newShipGroups[i].y, "id": newShipGroups[i].ids[k] });
             }
         }
+        this.sortShips();
     }
 
     // check from x1 to x2 for pubs
@@ -676,6 +706,8 @@ class Board {
             }
 
         }, this);
+
+        this.sortShips();
 
     }
 
