@@ -1,6 +1,16 @@
 const {ipcRenderer} = require('electron');
 const rows = 9, cols = 9;
 
+// Ship animations timing
+const shipMoveTime = 7;
+const shipFadeInTime = 15;
+const shipFadeOutTime = 50;
+
+// lure animation timing
+const lureFadeInTime = 20;
+const lureFadeOutTime = 50;
+
+
 // the previous game state to compare ship positions to current game state.
 var previousGameState = null;
 let pNum = null;
@@ -212,11 +222,11 @@ function drawShips(gameState, x, y, cell){
 function drawLure(gameState, x, y, cell){
 	var n = checkLure(gameState, x, y);
 	if(n>=0){
-		var style = cell.currentStyle || window.getComputedStyle(cell, false);
-		var bg = style.backgroundImage.slice(4, -1);
 
-		cell.style.background = `url('assets/images/lure${n + 1}.png'), url(${bg})`;
-		cell.style.backgroundSize = '100% 100%';
+		var lure = document.createElement('div');
+		lure.id = "lure-p" + (n + 1);
+		lure.className = "lure";
+		cell.appendChild(lure);
 	}
 }
 
@@ -315,7 +325,6 @@ function displayAvailableSpots(gameState){
 				y: spot.y,
 			});
 		};
-
 	});
 }
 
@@ -344,37 +353,28 @@ ipcRenderer.on('GSO', (event, arg) => {
 	if(previousGameState && (previousGameState.phase == "SHIPSFLY" || previousGameState.phase == "SHIPSFLEE")) 
 	{
 		// alter the ships position property to fixed and apply offsets so they're not overlayed.
-		makeShipsReady(arg);
-		// animate the ships.
-		shipAnimation(arg, 0);
+		prepareShipsForAnimation(arg);
+		// animate the ships - will also do any required rendering AFTER the animations
+		animateAllShips(arg, 0);
 	}
 	else {
 		renderBoard(arg); // render the board from gamestate
-		renderPlayers(arg); // render both players from gamestate
-		previousGameState = arg;
+		hideNewShips(arg); // hide any new ships placed on the board
+		fadeInElements(arg, 0); // fade in new ships and lures in gently and advance the state afterward
 	}
-
-	switch (arg.phase) {
-		case "SHIPSFLY":
-		case "SHIPSFLEE":
-			sendEvent(arg.phase, arg);
-			break;
-	}
-
 });
 
 // ============================================================================
 // ANIMATION STUFF
 // ============================================================================
 // Animating by comparing the previous gamestate with the current one.
-function moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft, i) {
+function animateShip(gameState, element, startTop, endTop, startLeft, endLeft, i) {
 
 	var animate;	
 
 	// Up Left
 	if(startTop > endTop && startLeft > endLeft) 
 	{
-		console.log("up-left");
 		animate = setInterval(function() {
 			if(startTop <= endTop && startLeft <= endLeft)
 			{
@@ -382,7 +382,7 @@ function moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft,
 				element.style.left = endLeft + "px";
 				clearInterval(animate);
 				i++;
-				shipAnimation(gameState, i);
+				animateAllShips(gameState, i);
 			}
 			else
 			{
@@ -396,13 +396,12 @@ function moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft,
 				element.style.top= parseInt(startTop) + "px";
 				element.style.left = parseInt(startLeft) + "px";
 			}
-		}, 7);
+		}, shipMoveTime);
 	}
 
 	// Up Right
 	else if(startTop > endTop && startLeft < endLeft) 
 	{
-		console.log("up-right");
 		animate = setInterval(function() {
 			if(startTop <= endTop && startLeft >= endLeft)
 			{
@@ -410,7 +409,7 @@ function moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft,
 				element.style.left = endLeft + "px";
 				clearInterval(animate);
 				i++;
-				shipAnimation(gameState, i);
+				animateAllShips(gameState, i);
 			}
 			else
 			{
@@ -424,13 +423,12 @@ function moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft,
 				element.style.top= parseInt(startTop) + "px";
 				element.style.left = parseInt(startLeft) + "px";
 			}
-		}, 7);
+		}, shipMoveTime);
 	}
 
 	// Down Left
 	else if(startTop < endTop && startLeft > endLeft)
 	{
-		console.log("down-left");
 		animate = setInterval(function() {
 			if(startTop >= endTop && startLeft <= endLeft)
 			{
@@ -438,7 +436,7 @@ function moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft,
 				element.style.left = endLeft + "px";
 				clearInterval(animate);
 				i++;
-				shipAnimation(gameState, i);
+				animateAllShips(gameState, i);
 			}
 			else
 			{
@@ -452,13 +450,12 @@ function moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft,
 				element.style.top= parseInt(startTop) + "px";
 				element.style.left = parseInt(startLeft) + "px";
 			}
-		}, 7);
+		}, shipMoveTime);
 	}
 
 	// Down Right
 	else if(startTop < endTop && startLeft < endLeft)
 	{
-		console.log("down-right");
 		animate = setInterval(function() {
 			if(startTop >= endTop && startLeft >= endLeft)
 			{
@@ -466,7 +463,7 @@ function moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft,
 				element.style.left = endLeft + "px";
 				clearInterval(animate);
 				i++;
-				shipAnimation(gameState, i);
+				animateAllShips(gameState, i);
 			}
 			else
 			{
@@ -481,96 +478,128 @@ function moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft,
 				element.style.left = parseInt(startLeft) + "px";
 
 			}
-		}, 7);
+		}, shipMoveTime);
 	}
 
 	// Left
 	else if(startLeft > endLeft)
 	{
-		console.log("left");
 		animate = setInterval(function() {
 			if(startLeft <= endLeft)
 			{
 				element.style.left = endLeft + "px";
 				clearInterval(animate);
 				i++;
-				shipAnimation(gameState, i);
+				animateAllShips(gameState, i);
 			}
 			else 
 			{
 				startLeft--;
 				element.style.left = parseInt(startLeft) + "px";
 			}
-		}, 7);
+		}, shipMoveTime);
 	}
 
 	// Right
 	else if(startLeft < endLeft)
 	{
-		console.log("right");
 		animate = setInterval(function() {
 			if(startLeft >= endLeft)
 			{
 				element.style.left = endLeft + "px";
 				clearInterval(animate);
 				i++;
-				shipAnimation(gameState, i);
+				animateAllShips(gameState, i);
 			}
 			else 
 			{
 				startLeft++;
 				element.style.left = parseInt(startLeft) + "px";
 			}
-		}, 7);
+		}, shipMoveTime);
 	}
 
 	// Down
 	else if(startTop < endTop)
 	{
-		console.log("down");
 		animate = setInterval(function() {
 			if(startTop >= endTop)
 			{
 				element.style.top = endTop + "px";
 				clearInterval(animate);
 				i++;
-				shipAnimation(gameState, i);
+				animateAllShips(gameState, i);
 			}
 			else 
 			{
 				startTop++;
 				element.style.top = parseInt(startTop) + "px";
 			}
-		}, 7);
+		}, shipMoveTime);
 	}
 
 	// Up
 	else if(startTop > endTop)
 	{
-		console.log("up");
 		animate = setInterval(function() {
 			if(startTop <= endTop)
 			{
 				element.style.top = endTop + "px";
 				clearInterval(animate);
 				i++;
-				shipAnimation(gameState, i);
+				animateAllShips(gameState, i);
 			}
 			else 
 			{
 				startTop--;
 				element.style.top = parseInt(startTop) + "px";
 			}
-		}, 7);
+		}, shipMoveTime);
 	}
 	else
 	{
 		i++;
-		shipAnimation(gameState, i);
+		animateAllShips(gameState, i);
 	}
 }
 
-function shipAnimation(gameState, i) {
+function addShipsStuckOnPubTile(gameState) 
+{
+	if(previousGameState)
+	{
+		for(var i = 0; i < previousGameState.board.ships.length; ++i)
+		{
+			for(var k = 0; k < gameState.board.ships.length; ++k)
+			{
+				// if ship didn't move
+				if(previousGameState.board.ships[i].id == gameState.board.ships[k].id &&
+				   previousGameState.board.ships[i].x == gameState.board.ships[k].x &&
+				   previousGameState.board.ships[i].y == gameState.board.ships[k].y)
+				{
+					// check what tile it's on
+					for(var m = 0; m < previousGameState.board.tiles.length; ++m)
+					{
+						// if it's on a pub
+						if(previousGameState.board.tiles[m].type == 'pub' && 
+						   previousGameState.board.tiles[m].x == previousGameState.board.ships[i].x &&
+					       previousGameState.board.tiles[m].y == previousGameState.board.ships[i].y)
+						{
+							shipsMovedToTile.push({ "x" : previousGameState.board.ships[i].x, "y" : previousGameState.board.ships[i].y });
+						}
+					}					
+				}
+			}
+		}
+	}
+}
+
+function animateAllShips(gameState, i) {
+
+	if(i == 0)
+	{
+		fadeOutDeadShips(gameState, false);
+		addShipsStuckOnPubTile(gameState);
+	}
 
 	// animate the ships in turn start at 0, and increment i once animation is complete.
 	// async programming required us to use callbacks rather than more simple loops.
@@ -595,7 +624,7 @@ function shipAnimation(gameState, i) {
 			var ships = findByXY(previousGameState.board.ships, newShip.x, newShip.y);
 
 			// accumulate ships on the tile previously.
-			if(ships.length > 0)
+			if(ships.length > 0 && previousGameState.phase == 'SHIPSFLEE')
 			{
 				for(var j = 0; j < ships.length; ++j) 
 				{
@@ -679,7 +708,7 @@ function shipAnimation(gameState, i) {
 			var endLeft = endRect.left + offsetX; // using the offset so we don't overlay the ships
 
 			// animate it
-			moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft, i);
+			animateShip(gameState, element, startTop, endTop, startLeft, endLeft, i);
 			
 		}
 		// case when a ship is moving to the same tile and there's only one ship on that tile.
@@ -702,13 +731,13 @@ function shipAnimation(gameState, i) {
 			var endLeft = endRect.left; // no offset required since only one ship will land there
 
 			// animate it
-			moveShipToEnd(gameState, element, startTop, endTop, startLeft, endLeft, i);
+			animateShip(gameState, element, startTop, endTop, startLeft, endLeft, i);
 		}
 		// the ship isn't moving
 		else 
 		{
 			i++;
-			shipAnimation(gameState, i);
+			animateAllShips(gameState, i);
 		}
 	}
 	// when we've animated all the ships
@@ -716,17 +745,7 @@ function shipAnimation(gameState, i) {
 		// clear the array that tracks how many ships have been moved to destination tiles
 		shipsMovedToTile.length = 0;
 
-		// update the game state
-		previousGameState = gameState;
-
-		// render the final state which should align perfectly with the last frame of animation
-		renderBoard(gameState);
-  		renderPlayers(gameState);
-  		
-  		// send the next event if we're on SHIPSFLY, but if we just did SHIPSFLEE
-  		// then the player should send the draw event.
-  		if(gameState.phase != "DRAW")
-			sendEvent(gameState.phase, gameState);
+		fadeOutAllLures(gameState, false);
 	} 
 }
 
@@ -752,7 +771,7 @@ ipcRenderer.on("SET_PNUM", (event, arg) => {
 // modify the css for ships prior to flying.
 // we need a fixed position in order to move the ships to
 // another location.
-function makeShipsReady(gameState) {
+function prepareShipsForAnimation(gameState) {
 
 	// the ship elements
 	var ships = document.getElementsByClassName('ship');
@@ -827,4 +846,299 @@ function makeShipsReady(gameState) {
 			deadShip.style.background = "url('assets/images/shipDead.png')";
 		}
 	}
+}
+
+function hideNewShips(gameState) {
+
+	// only hide ships when we've just placed a new tile
+	if(previousGameState && previousGameState.phase == 'PLACE')
+	{
+		var newShips = gameState.board.ships;
+		var oldShips = previousGameState.board.ships;
+		
+		// compare new ships list to the previous list
+		for(var i = 0; i < newShips.length; ++i)
+		{
+			var found = false;
+
+			for(var k = 0; k < oldShips.length; ++k)
+			{
+				if(newShips[i].id == oldShips[k].id)
+				{
+					found = true;				
+				}
+			}
+
+			// if we didn't find the ship, then it's a new one - hide it!
+			if(!found)
+			{
+				document.getElementById(`ship-${newShips[i].id}`).style.visibility = 'hidden';
+			}
+		}
+	}
+}
+
+function fadeInElements(gameState, i) {
+
+	if(previousGameState && i < gameState.board.ships.length)
+	{
+		var ship = gameState.board.ships[i];
+		var oldShips = previousGameState.board.ships;
+		var found = false;
+		var element = document.getElementById(`ship-${ship.id}`);
+
+		// compare new ships list to the previous list
+		for(var k = 0; k < oldShips.length; ++k)
+		{
+			if(ship.id == oldShips[k].id)
+			{
+				found = true;
+			}
+		}
+		if(!found)
+		{
+			// if we didn't find it, fade it in
+			fadeInShip(gameState, element, i);
+		}
+		else
+		{
+			// otherwise, repeat for the next ship
+			i++;
+			fadeInElements(gameState, i);
+		}
+	}
+	else if(i == gameState.board.ships.length) 
+	{
+		// once we're done with the ships, fade in the lures
+		fadeInLure(gameState, false);
+	}
+	// there was no previous game state, but we still need to progress
+	// to fade in lures eventually in order to progress the game state object
+	// at the end of that function.
+	else {
+		i++;
+		fadeInElements(gameState, i);
+	}
+}
+
+function fadeOutDeadShips(gameState, finished) {
+
+	if(previousGameState && previousGameState.phase == 'SHIPSFLEE' && !finished)
+	{
+		// we want to fade these guys out simultaneously
+		var deadShips = new Array();
+
+		// get all the dead ships
+		for(var i = 0; i < previousGameState.board.ships.length; ++i)
+		{
+			var oldShip = previousGameState.board.ships[i];
+			var newShips = gameState.board.ships;
+			var found = false;
+			var element = document.getElementById(`ship-${oldShip.id}`);
+
+			for(var k = 0; k < newShips.length; ++k)
+			{
+				if(oldShip.id == newShips[k].id)
+				{
+					found = true;
+				}
+			}
+			if(!found)
+			{
+				deadShips.push(element);
+			}
+		}
+
+		// fade them out
+		if(deadShips.length > 0)
+		{
+			for(var i = 0; i < deadShips.length; ++i)
+			{
+				if(i == deadShips.length - 1)
+				{
+					// fading out the last ship progresses the state
+					fadeOutLastDeadShip(gameState, deadShips[i]);
+				}
+				else 
+				{
+					fadeOutDeadShip(deadShips[i]);
+				}
+			}
+		}
+	}
+	else
+	{
+		// we're finished - no need to test the finished variable though
+		return;
+	}
+}
+
+// adapted from https://stackoverflow.com/questions/6121203/how-to-do-fade-in-and-fade-out-with-javascript-and-css
+function fadeOutDeadShip(element) 
+{
+    var op = 1.0;
+    var timer = setInterval(function ()
+    {
+        if (op <= 0.1)
+        {
+        	element.style.visibility = 'hidden';
+            clearInterval(timer);
+        }
+        element.style.opacity = op;
+        op -= 0.1;
+    }, shipFadeOutTime);
+}
+
+// adapted from https://stackoverflow.com/questions/6121203/how-to-do-fade-in-and-fade-out-with-javascript-and-css
+function fadeOutLastDeadShip(gameState, element) 
+{
+    var op = 1.0;
+    var timer = setInterval(function ()
+    {
+        if (op <= 0.1)
+        {
+        	element.style.visibility = 'hidden';
+            clearInterval(timer);
+            fadeOutDeadShips(gameState, true); // progress the state
+        }
+        element.style.opacity = op;
+        op -= 0.1;
+    }, shipFadeOutTime);
+}
+
+// adapted from https://stackoverflow.com/questions/6121203/how-to-do-fade-in-and-fade-out-with-javascript-and-css
+function fadeInShip(gameState, element, i) 
+{
+	element.style.opacity = 0;
+	element.style.visibility = 'visible';
+
+    var op = 0;  // initial opacity
+    var timer = setInterval(function () 
+    {
+        if (op >= 1)
+        {
+        	element.style.opacity = 1;
+            clearInterval(timer);
+            i++;
+            fadeInElements(gameState, i);
+        }
+
+        element.style.opacity = op;
+        op += 0.1;
+    }, shipFadeInTime);
+}
+
+// adapted from https://stackoverflow.com/questions/6121203/how-to-do-fade-in-and-fade-out-with-javascript-and-css
+function fadeInLure(gameState, finished) {
+
+	if(previousGameState && previousGameState.phase == 'LURE' && !finished)
+	{
+		var player = previousGameState.player;
+		var lure = document.getElementById('lure-p' + (parseInt(player) + 1));
+		if(lure)
+		{
+			lure.style.visibility = 'hidden';
+			lure.style.opacity = 0;
+			lure.style.visibility = 'visible';
+
+    		var op = 0;  // initial opacity
+		    var timer = setInterval(function () 
+		    {
+		        if (op >= 1)
+		        {
+					lure.style.opacity = 1;		        	
+		            clearInterval(timer);
+		            fadeInLure(gameState, true);
+		        }
+
+		        lure.style.opacity = op;
+		        op += 0.1;
+		    }, lureFadeInTime);
+		}
+	}
+
+	// when we're done, progress the state
+	else if(!previousGameState || previousGameState.phase != 'LURE' || finished) 
+	{
+		renderPlayers(gameState); // render both players from gamestate
+		previousGameState = gameState;
+
+		switch (gameState.phase) 
+		{
+			case "SHIPSFLY":
+			case "SHIPSFLEE":
+				sendEvent(gameState.phase, gameState);
+				break;
+		}
+	}
+}
+
+function fadeOutAllLures(gameState, finished) {
+
+	// fade them out simultaneously
+	if(previousGameState && previousGameState.phase == 'SHIPSFLEE' && !finished)
+	{
+		for(var i = 0; i < gameState.players.length; ++i)
+		{
+			var lure = document.getElementById(`lure-p${i + 1}`);
+
+			if(i == gameState.players.length - 1)
+			{
+				// this one will move us to the else clause via callback to this function.
+				fadeOutLastLure(gameState, lure);
+			}
+			else 
+			{
+				fadeOutLure(lure);	
+			}
+		}
+	}
+	// we're done, so progress the state
+	else 
+	{
+		// update the game state
+		previousGameState = gameState;
+
+		// render the final state which should align perfectly with the last frame of animation
+		renderBoard(gameState);
+  		renderPlayers(gameState);
+  		
+  		// send the next event if we're on SHIPSFLY, but if we just did SHIPSFLEE
+  		// then the player should send the draw event.
+  		if(gameState.phase != "DRAW")
+			sendEvent(gameState.phase, gameState);
+
+	}
+}
+
+// adapted from https://stackoverflow.com/questions/6121203/how-to-do-fade-in-and-fade-out-with-javascript-and-css
+function fadeOutLure(element) {
+
+	var op = 1.0;
+    var timer = setInterval(function ()
+    {
+        if (op <= 0.1)
+        {
+        	element.style.visibility = 'hidden';
+            clearInterval(timer);
+        }
+        element.style.opacity = op;
+        op -= 0.1;
+    }, lureFadeOutTime);
+}
+
+// adapted from https://stackoverflow.com/questions/6121203/how-to-do-fade-in-and-fade-out-with-javascript-and-css
+function fadeOutLastLure(gameState, element) {
+	var op = 1.0;
+    var timer = setInterval(function ()
+    {
+        if (op <= 0.1)
+        {
+        	element.style.visibility = 'hidden';
+            clearInterval(timer);
+            fadeOutAllLures(gameState, true);
+        }
+        element.style.opacity = op;
+        op -= 0.1;
+    }, lureFadeOutTime);
 }
