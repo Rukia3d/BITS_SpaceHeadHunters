@@ -201,6 +201,7 @@ body {
 }
 
 #board .cell{
+	position: relative;
 	flex: 0 1 calc(11.11% - 4px);
 	height: calc(11.11% - 4px);
 	margin: 2px;
@@ -352,4 +353,33 @@ body {
 	margin: 0;
 	padding: 0;
 	float: left;
+	z-index: 99;
+}
+
+.lure {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+#lure-p1 {
+	background: url('assets/images/lure1.png');
+	background-size: 100% 100%;
+}
+
+#lure-p2 {
+	background: url('assets/images/lure2.png');
+	background-size: 100% 100%;
+}
+
+#lure-p3 {
+	background: url('assets/images/lure3.png');
+	background-size: 100% 100%;
+}
+
+#lure-p4 {
+	background: url('assets/images/lure4.png');
+	background-size: 100% 100%;
 }
