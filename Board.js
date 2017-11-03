@@ -458,7 +458,7 @@ class Board {
                 // find cruiser lures
                 for(var t = 0; t < axisLures.length; ++t) {
 
-                    if(this.getTile(axisLures[t].x, axisLures[t].y) == "cruiser") {
+                    if(this.getTile(axisLures[t].x, axisLures[t].y).type == "cruiser") {
 
                         cruiserLures.push({ "axis" : axisLures[t].axis, "x" : axisLures[t].x, "y" : axisLures[t].y });
                     }
