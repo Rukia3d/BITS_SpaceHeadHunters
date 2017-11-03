@@ -151,6 +151,8 @@ class Board {
                 ids.push(i.id);
 
         }, this);
+        
+        ids.reverse();
 
         return ids;
     }
