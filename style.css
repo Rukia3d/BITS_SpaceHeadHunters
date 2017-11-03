@@ -206,6 +206,7 @@ body {
 	height: calc(11.11% - 4px);
 	margin: 2px;
 	background-color: rgba(100, 100, 100, 0.7);
+	transition: all .5s ease-in-out !important;
 }
 
 /* CELL STYLES */
@@ -213,7 +214,7 @@ body {
 /* Available Card Spots */
 .card-available {
 	background-color: rgba(150, 200, 0, 0.5) !important;
-	transition: background-color .2s ease-in-out !important;
+	transition: background-color .3s ease-in-out !important;
 }
 
 .card-available:hover {
@@ -223,7 +224,7 @@ body {
 /* Available Lure Spots */
 /* Had to do a hacky gradient + url image to get desired effect */
 .lure-available.pub {
-	transition: background .2s ease-in-out;
+	transition: background .3s ease-in-out !important;
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/pub.jpg');
 	background-size: 100% 100%;
 }
@@ -234,7 +235,7 @@ body {
 }
 
 .lure-available.space {
-	transition: background .2s ease-in-out;
+	transition: background .3s ease-in-out !important;
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/space.jpg');
 	background-size: 100% 100%;
 }
@@ -245,7 +246,7 @@ body {
 }
 
 .lure-available.lair {
-	transition: background .2s ease-in-out;
+	transition: background .3s ease-in-out !important;
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/lair.jpg');
 	background-size: 100% 100%;
 }
@@ -256,7 +257,7 @@ body {
 }
 
 .lure-available.gate1 {
-	transition: background .2s ease-in-out;
+	transition: background .3s ease-in-out !important;
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/gate1.jpg');
 	background-size: 100% 100%;
 }
@@ -267,7 +268,7 @@ body {
 }
 
 .lure-available.gate2 {
-	transition: background .2s ease-in-out;
+	transition: background .3s ease-in-out !important;
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/gate2.jpg');
 	background-size: 100% 100%;
 }
@@ -278,7 +279,7 @@ body {
 }
 
 .lure-available.gate3 {
-	transition: background .2s ease-in-out;
+	transition: background .3s ease-in-out !important;
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/gate3.jpg');
 	background-size: 100% 100%;
 }
@@ -289,7 +290,7 @@ body {
 }
 
 .lure-available.cruiser {
-	transition: background .2s ease-in-out;
+	transition: background .3s ease-in-out !important;
 	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/cruiser.jpg');
 	background-size: 100% 100%;
 }

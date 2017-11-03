@@ -324,7 +324,6 @@ function displayAvailableSpots(gameState){
 				y: spot.y,
 			});
 		};
-
 	});
 }
 
@@ -359,9 +358,8 @@ ipcRenderer.on('GSO', (event, arg) => {
 	}
 	else {
 		renderBoard(arg); // render the board from gamestate
-		renderPlayers(arg); // render both players from gamestate
 		hideNewShips(arg); // hide any new ships placed on the board
-		fadeInElements(arg, 0); // fade in new ships and lures in gently
+		fadeInElements(arg, 0); // fade in new ships and lures in gently and advance the state afterward
 	}
 });
 
@@ -564,10 +562,43 @@ function animateShip(gameState, element, startTop, endTop, startLeft, endLeft, i
 	}
 }
 
+function addShipsStuckOnPubTile(gameState) 
+{
+	if(previousGameState)
+	{
+		for(var i = 0; i < previousGameState.board.ships.length; ++i)
+		{
+			for(var k = 0; k < gameState.board.ships.length; ++k)
+			{
+				// if ship didn't move
+				if(previousGameState.board.ships[i].id == gameState.board.ships[k].id &&
+				   previousGameState.board.ships[i].x == gameState.board.ships[k].x &&
+				   previousGameState.board.ships[i].y == gameState.board.ships[k].y)
+				{
+					// check what tile it's on
+					for(var m = 0; m < previousGameState.board.tiles.length; ++m)
+					{
+						// if it's on a pub
+						if(previousGameState.board.tiles[m].type == 'pub' && 
+						   previousGameState.board.tiles[m].x == previousGameState.board.ships[i].x &&
+					       previousGameState.board.tiles[m].y == previousGameState.board.ships[i].y)
+						{
+							shipsMovedToTile.push({ "x" : previousGameState.board.ships[i].x, "y" : previousGameState.board.ships[i].y });
+						}
+					}					
+				}
+			}
+		}
+	}
+}
+
 function animateAllShips(gameState, i) {
 
 	if(i == 0)
-		fadeOutDeadShips(gameState, 0);
+	{
+		fadeOutDeadShips(gameState, false);
+		addShipsStuckOnPubTile(gameState);
+	}
 
 	// animate the ships in turn start at 0, and increment i once animation is complete.
 	// async programming required us to use callbacks rather than more simple loops.
@@ -1021,6 +1052,7 @@ function fadeInLure(gameState, finished) {
 	// when we're done, progress the state
 	else if(!previousGameState || previousGameState.phase != 'LURE' || finished) 
 	{
+		renderPlayers(gameState); // render both players from gamestate
 		previousGameState = gameState;
 
 		switch (gameState.phase) 
