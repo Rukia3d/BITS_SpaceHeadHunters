@@ -354,6 +354,7 @@ ipcRenderer.on('GSO', (event, arg) => {
 		// alter the ships position property to fixed and apply offsets so they're not overlayed.
 		prepareShipsForAnimation(arg);
 		// animate the ships - will also do any required rendering AFTER the animations
+		// will also fade out lures and dead ships
 		animateAllShips(arg, 0);
 	}
 	else {
@@ -1001,6 +1002,7 @@ function fadeOutLastDeadShip(gameState, element)
 // adapted from https://stackoverflow.com/questions/6121203/how-to-do-fade-in-and-fade-out-with-javascript-and-css
 function fadeInShip(gameState, element, i) 
 {
+	console.log('ship entered');
 	element.style.opacity = 0;
 	element.style.visibility = 'visible';
 

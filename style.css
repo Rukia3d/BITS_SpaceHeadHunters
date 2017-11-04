@@ -205,135 +205,117 @@ body {
 	flex: 0 1 calc(11.11% - 4px);
 	height: calc(11.11% - 4px);
 	margin: 2px;
-	background-color: rgba(100, 100, 100, 0.7);
-	transition: all .5s ease-in-out !important;
+	background-image: url('assets/images/cell.jpg');
+	transition: all .3s ease-in-out !important;
+	background-size: 100% 100%;
+	opacity: .7;
 }
 
 /* CELL STYLES */
 
 /* Available Card Spots */
 .card-available {
-	background-color: rgba(150, 200, 0, 0.5) !important;
-	transition: background-color .3s ease-in-out !important;
+	background-image: url('assets/images/card-available.jpg') !important;
+	opacity: .5 !important;
+	/*background-color: rgba(150,200,0,.5) !important;*/
 }
 
 .card-available:hover {
-	background-color: rgba(150, 200, 0, 0.7) !important;
+	background-image: url('assets/images/card-available-hover.jpg') !important;
+	opacity: .7 !important;
 }
 
 /* Available Lure Spots */
-/* Had to do a hacky gradient + url image to get desired effect */
 .lure-available.pub {
-	transition: background .3s ease-in-out !important;
-	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/pub.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/pub-available.jpg') !important;
 }
 
 .lure-available.pub:hover {
-	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/pub.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/pub-available-hover.jpg') !important;
 }
 
 .lure-available.space {
-	transition: background .3s ease-in-out !important;
-	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/space.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/space-available.jpg') !important;
 }
 
 .lure-available.space:hover {
-	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/space.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/space-available-hover.jpg') !important;
 }
 
 .lure-available.lair {
-	transition: background .3s ease-in-out !important;
-	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/lair.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/lair-available.jpg') !important;
 }
 
 .lure-available.lair:hover {
-	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/lair.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/lair-available-hover.jpg') !important;
 }
 
 .lure-available.gate1 {
-	transition: background .3s ease-in-out !important;
-	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/gate1.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/gate1-available.jpg') !important;
 }
 
 .lure-available.gate1:hover {
-	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/gate1.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/gate1-available-hover.jpg') !important;
 }
 
 .lure-available.gate2 {
-	transition: background .3s ease-in-out !important;
-	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/gate2.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/gate2-available.jpg') !important;
 }
 
 .lure-available.gate2:hover {
-	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/gate2.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/gate2-available-hover.jpg') !important;
 }
 
 .lure-available.gate3 {
-	transition: background .3s ease-in-out !important;
-	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/gate3.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/gate3-available.jpg') !important;
 }
 
 .lure-available.gate3:hover {
-	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/gate3.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/gate3-available-hover.jpg') !important;
 }
 
 .lure-available.cruiser {
-	transition: background .3s ease-in-out !important;
-	background: linear-gradient(0deg, rgba(150, 200, 0, 0.5), rgba(150, 200, 0, 0.5)), url('assets/images/cruiser.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/cruiser-available.jpg') !important;
 }
 
 .lure-available.cruiser:hover {
-	background: linear-gradient(0deg, rgba(150, 200, 0, 0.7), rgba(150, 200, 0, 0.7)), url('assets/images/cruiser.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/cruiser-available-hover.jpg') !important;
 }
 
 /* Plain old boring cells */
 .pub {
-	background: url('assets/images/pub.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/pub.jpg') !important;
+	opacity: 1 !important;
 }
 
 .space {
-	background: url('assets/images/space.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/space.jpg') !important;
+	opacity: 1 !important;
 }
 
 .lair {
-	background: url('assets/images/lair.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/lair.jpg') !important;
+	opacity: 1 !important;
 }
 
 .gate1 {
-	background: url('assets/images/gate1.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/gate1.jpg') !important;
+	opacity: 1 !important;
 }
 
 .gate2 {
-	background: url('assets/images/gate1.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/gate1.jpg') !important;
+	opacity: 1 !important;
 }
 
 .gate3 {
-	background: url('assets/images/gate1.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/gate1.jpg') !important;
+	opacity: 1 !important;
 }
 
 .cruiser {
-	background: url('assets/images/cruiser.jpg');
-	background-size: 100% 100%;
+	background-image: url('assets/images/cruiser.jpg') !important;
+	opacity: 1 !important;
 }
 
 /* contrast background for the ships? */
@@ -366,21 +348,22 @@ body {
 }
 
 #lure-p1 {
-	background: url('assets/images/lure1.png');
-	background-size: 100% 100%;
+	background: url('assets/images/lure1.png') !important;
+	background-size: 100% 100% !important;
 }
 
 #lure-p2 {
-	background: url('assets/images/lure2.png');
-	background-size: 100% 100%;
+	background: url('assets/images/lure2.png') !important;
+	background-size: 100% 100% !important;
 }
 
 #lure-p3 {
-	background: url('assets/images/lure3.png');
-	background-size: 100% 100%;
+	background: url('assets/images/lure3.png') !important;
+	background-size: 100% 100% !important;
+	
 }
 
 #lure-p4 {
-	background: url('assets/images/lure4.png');
-	background-size: 100% 100%;
+	background: url('assets/images/lure4.png') !important;
+	background-size: 100% 100% !important;
 }
