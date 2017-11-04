@@ -900,6 +900,18 @@ function fadeInElements(gameState, i) {
 			fadeInElements(gameState, i);
 		}
 	}
+	else if(i == gameState.board.ships.length && previousGameState && previousGameState.phase == 'PLACE') {
+		var op = 1.0;
+	    var timer = setInterval(function ()
+	    {
+	        if (op <= 0.1)
+	        {
+	        	fadeInLure(gameState, false);
+	            clearInterval(timer);
+	        }
+	        op -= 0.1;
+	    }, shipFadeInTime);
+	}
 	else if(i == gameState.board.ships.length) 
 	{
 		// once we're done with the ships, fade in the lures
