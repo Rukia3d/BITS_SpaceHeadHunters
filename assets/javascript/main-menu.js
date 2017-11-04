@@ -1,5 +1,15 @@
 const {ipcRenderer} = require('electron');
 
+var sounds = {
+	music: new Audio("assets/sounds/backgroundMusic.wav"),
+	bPressed : new Audio("assets/sounds/buttonPressed.wav"),
+	bHover: new Audio("assets/sounds/buttonHover.wav"),
+}
+
+sounds.music.volume = 0.05;
+sounds.music.autoplay = true;
+sounds.music.loop = true;
+
 // main menu buttons
 var hotseat = document.getElementById('btn-hotseat');
 var network = document.getElementById('btn-network');
@@ -166,6 +176,7 @@ settingsBack.onclick = function(e)
 exit.onclick = function(e) 
 {
 	e.preventDefault();
+	playSound("bPressed");
 	ipcRenderer.send('EXIT', {});
 }
 
@@ -173,3 +184,17 @@ ipcRenderer.on('playerUpdate', (event, arg) => {
   	console.log(arg);
 	playerCount.innerHTML = arg;
 });
+
+//-----------------------------------------------------------------------------
+// SOUNDS
+//-----------------------------------------------------------------------------
+[exit, settingsBack, settings, hostStart, lobbyBack, connect, lobbyBtn,
+networkBack, network, hotseatBack, hotseatStart, hotseat].forEach(function(btn){
+	btn.addEventListener('mouseover', () => console.log("boo") || playSound("bHover"));
+	btn.addEventListener('click', () => console.log("boo") || playSound("bPressed"));
+})
+
+function playSound(sound){
+	sounds[sound].currentTime = 0;
+	sounds[sound].play();
+}
