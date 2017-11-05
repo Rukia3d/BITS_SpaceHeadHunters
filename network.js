@@ -23,10 +23,14 @@ class network {
 
     connect(ip) {
 
-        console.log(ip);
-        // TODO Set to localhost for testing, replace with ip data
+        if (ip.ip === "...") {
+            console.log("No IP address detected, defaulting to localhost...");
+            this.client = client_io('http://localhost:3000');
+        } else {
+            console.log("Attempting connection to http://" + ip.ip + ":" + "3000");
+            this.client = client_io("http://" + ip.ip + ":" + "3000");
+        }
         // TODO if connection fails, display "no server found at ip:port"..?
-        this.client = client_io('http://localhost:3000');
 
         this.client.on("UPDATE", (event, data) => {
             
