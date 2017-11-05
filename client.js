@@ -65,62 +65,63 @@ class Client {
 
     handleAction(action, data) {
 
-        if (this.state === "HOTSEAT") {
-            switch (action) {
+        console.log(this.state);
 
-                case "DRAW":
-                    // if the draw was good
-                    if(this.gso.drawCard(data)) {
-                        // go to place
+        switch (this.state) {
+        
+            case "HOTSEAT":
+            case "HOST":
+
+                switch (action) {
+
+                    case "DRAW":
+                        // if the draw was good
+                        if(this.gso.drawCard(data)) {
+                            // go to place
+                            this.gso.nextPhase();
+                        }
+                        break;
+
+                    case "PLACE":
+                        // if the place was good
+                        if(this.gso.placeCard(data.player, data.x, data.y)) {
+                            // go to lure
+                            this.gso.nextPhase();
+                        }
+                        break;
+
+                    case "LURE":
+                        // if the lure was good
+                        if(this.gso.placeLure(data.player, data.x, data.y)) {                    
+                            // go to shipsfly, or back to draw for next player
+                            this.gso.nextPhase();
+                        }
+                        break;
+
+                    case "SHIPSFLY":
+                    case "SCORING":
+                    case "SHIPSFLEE":
                         this.gso.nextPhase();
-                    }
-                    break;
+                        //this.updateCallBack();
+                        break;
 
-                case "PLACE":
-                    // if the place was good
-                    if(this.gso.placeCard(data.player, data.x, data.y)) {
-                        // go to lure
-                        this.gso.nextPhase();
-                    }
-                    break;
-
-                case "LURE":
-                    // if the lure was good
-                    if(this.gso.placeLure(data.player, data.x, data.y)) {                    
-                        // go to shipsfly, or back to draw for next player
-                        this.gso.nextPhase();
-                    }
-                    break;
-
-                case "SHIPSFLY":
-                case "SCORING":
-                case "SHIPSFLEE":
-                    this.gso.nextPhase();
-                    //this.updateCallBack();
-                    break;
-
-                case "RESET":
-                
-                    //TODO Transition back to main menu...
-                    //menuCallBack();
-                    //gso = new GameState(2);
-                    break;
+                    case "RESET":
                     
+                        //TODO Transition back to main menu...
+                        //menuCallBack();
+                        //gso = new GameState(2);
+                        break;
+                        
 
-            }
+                }
 
-            clientEventBus.emit("updateGameState", this.gso.getGameState());
+                clientEventBus.emit("updateGameState", this.gso.getGameState()); //update local renderer
+                if (this.state === "HOST") {
+                    this.net.sendGSO("UPDATE", this.gso.getGameState()); //update remote renderers
+                }
+                break;
 
-        }
-
-        if (this.state === "CONNECT") {
-
-            if (this.pNum === 0) {
-                
-                console.log("I AM A SERVER QUACK");
-                // update gso
-
-            } else {
+            case "CONNECT":
 
                 switch (action) {
                     
@@ -131,7 +132,11 @@ class Client {
                         break;
 
                 }
-            }
+                break;
+
+            default:
+                console.log("PANIC: Oh noes you shouldn't be able to get here");
+                break;
 
         }
 

@@ -112,7 +112,7 @@ ipc.on('DRAW', function(event, data) {
 ipc.on("PLACE", function(event, data) {
 
 	client.handleAction("PLACE", data);
-	event.sender.send("GSO", client.getGameState());
+	//event.sender.send("GSO", client.getGameState());
 
 });
 
@@ -120,7 +120,7 @@ ipc.on("PLACE", function(event, data) {
 ipc.on('LURE', function(event, data) {
 
 	client.handleAction("LURE", data);
-	event.sender.send("GSO", client.getGameState());
+	//event.sender.send("GSO", client.getGameState());
 
 	
 });
@@ -128,21 +128,21 @@ ipc.on('LURE', function(event, data) {
 ipc.on('SHIPSFLY', function(event, data) {
 	
 	client.handleAction("SHIPSFLY", data);
-	event.sender.send("GSO", client.getGameState());
+	//event.sender.send("GSO", client.getGameState());
 
 });
 
 ipc.on('SCORING', function(event, data) {
 	
 	client.handleAction("SCORING", data);
-	event.sender.send("GSO", client.getGameState());
+	//event.sender.send("GSO", client.getGameState());
 
 });
 
 ipc.on('SHIPSFLEE', function(event, data) {
 
 	client.handleAction("SHIPSFLEE", data);
-	event.sender.send("GSO", client.getGameState());
+	//event.sender.send("GSO", client.getGameState());
 
 });
 
@@ -150,7 +150,7 @@ ipc.on('SHIPSFLEE', function(event, data) {
 ipc.on('RESET', function(event, data) {
 
 	client.handleAction("RESET", data);
-	event.sender.send("GSO", client.getGameState());
+	//event.sender.send("GSO", client.getGameState());
 
 });
 

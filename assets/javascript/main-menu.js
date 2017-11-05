@@ -185,7 +185,6 @@ ipcRenderer.on('playerUpdate', (event, arg) => {
 	playerCount.innerHTML = arg;
 });
 
-<<<<<<< HEAD
 ipcRenderer.on('GSO', (event, arg) => {
 	/*
 	console.log(event, arg) // helper, prints objects to use
@@ -206,7 +205,6 @@ ipcRenderer.on('GSO', (event, arg) => {
 	console.log("GAME START WHAT");
   
   })
-=======
 //-----------------------------------------------------------------------------
 // SOUNDS
 //-----------------------------------------------------------------------------
@@ -220,4 +218,3 @@ function playSound(sound){
 	sounds[sound].currentTime = 0;
 	sounds[sound].play();
 }
->>>>>>> master

@@ -28,10 +28,11 @@ class network {
         // TODO if connection fails, display "no server found at ip:port"..?
         this.client = client_io('http://localhost:3000');
 
-        this.client.on("updateState", (event, data) => {
+        this.client.on("UPDATE", (event, data) => {
             
             console.log(`${this.client.id} recieved update`);
             console.log(event);
+            clientEventBus.emit("updateGameState", event);
 
         });
 
