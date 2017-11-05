@@ -81,10 +81,11 @@ class network {
             clientEventBus.emit("NEW_CONNECTION", this.connectedPlayers.pCount);
             this.server.emit("playerUpdate", this.connectedPlayers.pCount);
 
-            socket.on("ACTION", (action) => {
+            socket.on("ACTION", (action, data, pNum) => {
                 
-                console.log("SERVER: Recieved action!");
-    
+                console.log(`SERVER: Action event ${action} recieved from player ${pNum} with data ${data}`)
+                clientEventBus.emit("HANDLE_ACTION", action, data, pNum);
+                
             });
                 
         });
@@ -108,11 +109,9 @@ class network {
         return this.connectedPlayers.pCount;
     }
 
-    sendAction(action) {
+    sendAction(action, data, pNum) {
 
-        console.log("sending action");
-        console.log(action);
-        this.client.emit("ACTION", action);
+        this.client.emit("ACTION", action, data, pNum);
 
     }
 

@@ -63,9 +63,7 @@ class Client {
 
     }
 
-    handleAction(action, data) {
-
-        console.log(this.state);
+    handleAction(action, data, pNum) {
 
         switch (this.state) {
         
@@ -128,7 +126,7 @@ class Client {
                     case "DRAW":
                     case "PLACE":
                     case "LURE":                
-                        this.net.sendAction(action);
+                        this.net.sendAction(action, data, this.pNum);
                         break;
 
                 }

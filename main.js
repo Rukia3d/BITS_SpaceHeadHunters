@@ -73,7 +73,6 @@ ipc.on('CONNECT', function(event, ip) {
 ipc.on('HOST', function(event, {}) {
 	
 	clientEventBus.emit("CHANGE_STATE", "HOST", {});
-	
 	appWindow.webContents.send("HOST_START", {});
 
 });
@@ -100,58 +99,33 @@ ipc.on('HOSTEND', function(event, {}) {
 // Game Actions
 // ----------------------------------------------------------------------------
 
-// draw
 ipc.on('DRAW', function(event, data) {
-
-	client.handleAction("DRAW", data);
-	//event.sender.send("GSO", client.getGameState());
-
+	client.handleAction("DRAW", data, 0);
 });
 
-// place
 ipc.on("PLACE", function(event, data) {
-
-	client.handleAction("PLACE", data);
-	//event.sender.send("GSO", client.getGameState());
-
+	client.handleAction("PLACE", data, 0);
 });
 
-// lure
 ipc.on('LURE', function(event, data) {
-
-	client.handleAction("LURE", data);
-	//event.sender.send("GSO", client.getGameState());
-
-	
+	client.handleAction("LURE", data, 0);
 });
 
 ipc.on('SHIPSFLY', function(event, data) {
-	
-	client.handleAction("SHIPSFLY", data);
-	//event.sender.send("GSO", client.getGameState());
-
+	client.handleAction("SHIPSFLY", data, 0);
 });
 
 ipc.on('SCORING', function(event, data) {
-	
-	client.handleAction("SCORING", data);
-	//event.sender.send("GSO", client.getGameState());
-
+	client.handleAction("SCORING", data, 0);
 });
 
 ipc.on('SHIPSFLEE', function(event, data) {
-
-	client.handleAction("SHIPSFLEE", data);
-	//event.sender.send("GSO", client.getGameState());
-
+	client.handleAction("SHIPSFLEE", data, 0);
 });
 
 // reset
 ipc.on('RESET', function(event, data) {
-
-	client.handleAction("RESET", data);
-	//event.sender.send("GSO", client.getGameState());
-
+	client.handleAction("RESET", data, 0);
 });
 
 // ----------------------------------------------------------------------------
@@ -197,4 +171,10 @@ clientEventBus.on("CONNECT_REND_TO_INDEX", (event, data) => {
 		appWindow.webContents.send('GSO', event);
 	});	
 	
+});
+
+clientEventBus.on("HANDLE_ACTION", (event, data, pNum) => {
+
+	client.handleAction(event, data, pNum);	
+
 });
