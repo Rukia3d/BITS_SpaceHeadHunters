@@ -1,7 +1,7 @@
 body {
 	margin: 0;
 	padding: 0;
-	/*font-family: 'Geo', sans-serif;*/
+	font-family: 'Geo', sans-serif;
 	background-image: url('assets/images/background.jpg');
 	background-size: cover;
 	color: #fff;
@@ -93,4 +93,46 @@ h1 {
 
 #client-waiting-message {
 	display: none;
+}
+
+.slider-wrap {
+	position: relative;
+	width: 50px;
+	height: 1em;
+}
+
+.slider-wrap input {
+	display: none;
+}
+
+.slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	background-color: #000;
+	transition: .4s;
+	border-radius: 50%;
+}
+
+.slider:before {
+	position: absolute;
+	content: "";
+	height: .7em;
+	width: .7em;
+	left: 4px;
+	bottom: 4px;
+	background-color: #fff;
+	transition: .4s;
+	border-radius: 50%;
+}
+
+input:checked + .slider {
+	box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+	transform: translateX(26px);
 }

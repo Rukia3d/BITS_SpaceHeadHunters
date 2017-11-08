@@ -1,9 +1,9 @@
 const {ipcRenderer} = require('electron');
 
 var sounds = {
-	music: new Audio("assets/sounds/backgroundMusic.wav"),
-	bPressed : new Audio("assets/sounds/buttonPressed.wav"),
-	bHover: new Audio("assets/sounds/buttonHover.wav"),
+	music: new Audio("assets/sounds/backgroundMusic.mp3"),
+	bPressed : new Audio("assets/sounds/buttonPressed.mp3"),
+	bHover: new Audio("assets/sounds/buttonHover.mp3"),
 }
 
 sounds.music.volume = 0.05;
@@ -204,7 +204,7 @@ ipcRenderer.on('GSO', (event, arg) => {
 
 	console.log("GAME START WHAT");
   
-  })
+  });
 //-----------------------------------------------------------------------------
 // SOUNDS
 //-----------------------------------------------------------------------------
@@ -212,7 +212,7 @@ ipcRenderer.on('GSO', (event, arg) => {
 networkBack, network, hotseatBack, hotseatStart, hotseat].forEach(function(btn){
 	btn.addEventListener('mouseover', () => console.log("boo") || playSound("bHover"));
 	btn.addEventListener('click', () => console.log("boo") || playSound("bPressed"));
-})
+});
 
 function playSound(sound){
 	sounds[sound].currentTime = 0;

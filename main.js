@@ -17,8 +17,6 @@ let client = new Client();
 app.on("ready", function() {
 
 	appWindow = new BrowserWindow({
-		x: -1000,
-		y: 0,
 		width: 950,
 		height: 750,
 		backgroundColor: '#006282',
