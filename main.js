@@ -9,6 +9,8 @@ var app = electron.app;
 var ipc = electron.ipcMain;
 
 let appWindow;
+let settingsWindow;
+
 let client = new Client();
 
 // ----------------------------------------------------------------------------
@@ -43,6 +45,36 @@ app.on("window-all-closed", app.quit);
 // Exit the app
 ipc.on('EXIT', function(event, {}) {
 	app.quit();
+});
+
+ipc.on('SETTINGS', function() {
+	settingsWindow = new BrowserWindow({
+		parent: appWindow,
+		backgroundColor: '#006282',
+		modal: true,
+		show: false,
+		frame: false,
+		resizable: false,
+		width: 371,
+		height: 446
+	});
+
+	settingsWindow.loadURL("file://" + __dirname + "/settings.html");
+
+	settingsWindow.once('ready-to-show', function() {
+		settingsWindow.show();
+	});
+
+	settingsWindow.on('window-should-close', settingsWindow.close);
+});
+
+ipc.on('SETTINGSCLOSE', function() {
+	settingsWindow.close();
+});
+
+ipc.on('MAINMENU', function() {
+	appWindow.loadURL("file://" + __dirname + "/menu.html");
+	settingsWindow.close();
 });
 
 

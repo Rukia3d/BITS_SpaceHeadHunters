@@ -27,6 +27,8 @@ var hotseatPanel = document.getElementById('hotseat');
 
 // settings
 var settingsBack = document.getElementById('settings-back');
+var musicToggle = document.getElementById('music');
+var sfxToggle = document.getElementById('sfx');
 
 // hotseat
 var hotseatBack = document.getElementById('hotseat-back');
@@ -214,7 +216,20 @@ networkBack, network, hotseatBack, hotseatStart, hotseat].forEach(function(btn){
 	btn.addEventListener('click', () => console.log("boo") || playSound("bPressed"));
 });
 
+musicToggle.addEventListener('click', () => console.log("musicToggle") || toggleSound("music"));
+sfxToggle.addEventListener('click', () => {
+	console.log("sfxToggle1") || toggleSound("bHover"); 
+	console.log("sfxToggle2") || toggleSound("bPressed");
+});
+
 function playSound(sound){
 	sounds[sound].currentTime = 0;
 	sounds[sound].play();
+}
+
+function toggleSound(sound) {
+	if(sounds[sound].muted == true)
+		sounds[sound].muted = false;
+	else
+		sounds[sound].muted = true;
 }

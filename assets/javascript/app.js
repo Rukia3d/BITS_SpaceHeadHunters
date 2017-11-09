@@ -1,4 +1,5 @@
 const {ipcRenderer} = require('electron');
+
 const rows = 9, cols = 9;
 
 // Ship animations timing
@@ -1155,4 +1156,11 @@ function fadeOutLastLure(gameState, element) {
         element.style.opacity = op;
         op -= 0.1;
     }, lureFadeOutTime);
+}
+
+
+// SETTINGS MENU
+var settings = document.getElementById('settings');
+settings.onclick = function() {
+	sendEvent('SETTINGS');
 }
