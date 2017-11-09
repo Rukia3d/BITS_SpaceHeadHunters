@@ -1,15 +1,7 @@
 const {ipcRenderer} = require('electron');
 const remote = require('electron').remote;
-
-var sounds = {
-	music: new Audio("assets/sounds/backgroundMusic.mp3"),
-	bPressed : new Audio("assets/sounds/buttonPressed.mp3"),
-	bHover: new Audio("assets/sounds/buttonHover.mp3")
-};
-
-sounds.music.volume = 0.05;
-sounds.music.autoplay = true;
-sounds.music.loop = true;
+var settings = require('./assets/javascript/settings');
+var sets = new settings();
 
 // main menu buttons
 var settings = document.getElementById('btn-settings');
@@ -56,7 +48,7 @@ mainMenu.onclick = function(e)
 exit.onclick = function(e) 
 {
 	e.preventDefault();
-	playSound("bPressed");
+	ipcRenderer.send('PLAYSOUND', 'bPressed');
 	ipcRenderer.send('EXIT', {});
 };
 
@@ -70,24 +62,38 @@ returnToGame.onclick = function(e)
 // SOUNDS
 //-----------------------------------------------------------------------------
 [exit, settingsBack, settings, returnToGame, mainMenu].forEach(function(btn){
-	btn.addEventListener('mouseover', () => console.log("boo") || playSound("bHover"));
-	btn.addEventListener('click', () => console.log("boo") || playSound("bPressed"));
+	btn.addEventListener('mouseover', () => {
+		ipcRenderer.send('PLAYSOUND', 'bHover');
+	});
+	btn.addEventListener('click', () => {
+		ipcRenderer.send('PLAYSOUND', 'bPressed');
+	});
 });
 
-musicToggle.addEventListener('click', () => console.log("musicToggle") || toggleSound("music"));
+musicToggle.addEventListener('click', () => {
+	ipcRenderer.send('SOUNDTOGGLE', 'music');
+});
+
 sfxToggle.addEventListener('click', () => {
-	console.log("sfxToggle1") || toggleSound("bHover"); 
-	console.log("sfxToggle2") || toggleSound("bPressed");
+	ipcRenderer.send('SOUNDTOGGLE', 'sfx');
 });
 
-function playSound(sound){
-	sounds[sound].currentTime = 0;
-	sounds[sound].play();
-}
+ipcRenderer.on('SOUNDTOGGLE', function(event, sound) {
+	sets.toggleSound(sound.sound, sound.status);
+});
 
-function toggleSound(sound) {
-	if(sounds[sound].muted == true)
-		sounds[sound].muted = false;
-	else
-		sounds[sound].muted = true;
-}
+ipcRenderer.on('PLAYSOUND', function(event, sound) {
+	sets.playSound(sound);
+});
+
+ipcRenderer.on('INITSOUNDS', function(event, soundSettings) {
+	sets.initSounds(soundSettings);
+	if(!soundSettings.music)
+	{
+		musicToggle.checked = false;
+	}
+	if(!soundSettings.sfx)
+	{
+		sfxToggle.checked = false;
+	}
+});

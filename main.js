@@ -63,17 +63,67 @@ ipc.on('SETTINGS', function() {
 
 	settingsWindow.once('ready-to-show', function() {
 		settingsWindow.show();
+		settingsWindow.webContents.send('INITSOUNDS', settings.sound);
 	});
 
 	settingsWindow.on('window-should-close', settingsWindow.close);
 });
 
+var settings = {
+	'sound': {
+		'music': true,
+		'sfx': true
+	}
+};
+
 ipc.on('SETTINGSCLOSE', function() {
 	settingsWindow.close();
 });
 
+ipc.on('SOUNDTOGGLE', function(event, sound) {
+
+	var status;
+	switch(sound)
+	{
+		case 'music':
+			status = settings.sound.music;
+			settings.sound.music = !settings.sound.music;
+			break;
+		case 'sfx':
+			status = settings.sound.sfx;
+			settings.sound.sfx = !settings.sound.sfx;
+			break;
+	}
+	event.sender.send('SOUNDTOGGLE', { 'sound': sound, 'status': status });
+});
+
+ipc.on('PLAYSOUND', function(event, sound) {
+
+	var status;
+	switch(sound)
+	{
+		case 'music':
+			status = settings.sound.music;
+			break;
+		case 'bPressed':
+			status = settings.sound.sfx;
+			break;
+		case 'bHover':
+			status = settings.sound.sfx;
+			break;
+	}
+
+	if(status)
+		event.sender.send('PLAYSOUND', sound);
+});
+
 ipc.on('MAINMENU', function() {
+
 	appWindow.loadURL("file://" + __dirname + "/menu.html");
+
+	appWindow.webContents.once('did-finish-load', function() {
+		appWindow.webContents.send('INITSOUNDS', settings.sound);
+	});
 	settingsWindow.close();
 });
 
@@ -87,7 +137,6 @@ ipc.on('HOTSEAT', function(event, players) {
 	appWindow.webContents.once('did-finish-load', function() {
 		appWindow.webContents.send('GSO', client.getGameState());
 	});
-
 });
 
 
