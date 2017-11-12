@@ -1,4 +1,6 @@
 const {ipcRenderer} = require('electron');
+var settings = require('./assets/javascript/settings');
+var sets = new settings();
 
 const rows = 9, cols = 9;
 
@@ -118,6 +120,7 @@ function renderActionArea(player, active, element, gamestate){
 
 				//message back to main
 				drawButton.onclick = function(){ 
+					sets.playSound("generate");
 					sendEvent(gamestate.phase, gamestate.player);
 				}
 
@@ -320,6 +323,8 @@ function displayAvailableSpots(gameState){
 		// cell.innerHTML = "A";
 		cell.className += " card-available";
 		cell.onclick = function(){
+			//play sound
+			sets.playSound("positioned");
 			sendEvent(gameState.phase, {
 				player: gameState.player, 
 				x: spot.x,
@@ -336,6 +341,8 @@ function displayAvailableLure(gameState){
 		// cell.innerHTML += " "+"L";
 		cell.className += " lure-available";
 		cell.onclick = function(){
+			//play sound
+			sets.playSound("positioned");
 			sendEvent(gameState.phase, {
 				player: gameState.player, 
 				x: card.x,
@@ -373,7 +380,9 @@ ipcRenderer.on('GSO', (event, arg) => {
 function animateShip(gameState, element, startTop, endTop, startLeft, endLeft, i) {
 
 	var animate;	
-
+	// play sound
+	sets.playSound("shipsfly");
+	
 	// Up Left
 	if(startTop > endTop && startLeft > endLeft) 
 	{

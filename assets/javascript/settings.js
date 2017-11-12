@@ -5,7 +5,10 @@ class settings {
 		this.sounds = {
 			music: new Audio("assets/sounds/backgroundMusic.mp3"),
 			bPressed : new Audio("assets/sounds/buttonPressed.mp3"),
-			bHover: new Audio("assets/sounds/buttonHover.mp3")
+			bHover: new Audio("assets/sounds/buttonHover.mp3"),
+			positioned: new Audio("assets/sounds/positioned.mp3"),
+			shipsfly: new Audio("assets/sounds/shipsfly.mp3"),
+			generate: new Audio("assets/sounds/generate.mp3"),
 		};
 
 		this.sounds.music.volume = 0.05;
