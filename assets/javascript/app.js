@@ -157,7 +157,6 @@ function renderActionArea(player, active, element, gamestate){
 	}
 	
 	element.appendChild(activeArea);
-	console.log(element.style);
 }
 
 
