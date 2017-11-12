@@ -72,11 +72,13 @@ ipc.on('SETTINGS', function() {
 var settings = {
 	'sound': {
 		'music': true,
-		'sfx': true
+		'sfx': true,
+		'playTime' : 0
 	}
 };
 
 ipc.on('SETTINGSCLOSE', function() {
+	appWindow.webContents.send('INITSOUNDS', settings.sound);
 	settingsWindow.close();
 });
 
@@ -96,6 +98,10 @@ ipc.on('SOUNDTOGGLE', function(event, sound) {
 	}
 	event.sender.send('SOUNDTOGGLE', { 'sound': sound, 'status': status });
 });
+
+ipc.on('UPDATESOUND', function(event, currentPlayTime) {
+	settings.sound.playTime = currentPlayTime;
+})
 
 ipc.on('PLAYSOUND', function(event, sound) {
 
@@ -135,6 +141,7 @@ ipc.on('HOTSEAT', function(event, players) {
 
 	// send the GSO once the window is ready
 	appWindow.webContents.once('did-finish-load', function() {
+		appWindow.webContents.send('INITSOUNDS', settings.sound);
 		appWindow.webContents.send('GSO', client.getGameState());
 	});
 });

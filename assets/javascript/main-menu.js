@@ -52,6 +52,7 @@ hotseat.onclick = function(e)
 hotseatStart.onclick = function(e) 
 {
 	e.preventDefault();
+	ipcRenderer.send('UPDATESOUND', sets.getPlayTime());
 	ipcRenderer.send('HOTSEAT', parseInt(hotseatPlayers.value));
 }
 
@@ -143,6 +144,7 @@ hostStart.onclick = function(e)
 {
 	var players = parseInt(playerCount.innerHTML);
 	e.preventDefault();
+	ipcRenderer.send('UPDATESOUND', sets.getPlayTime());
 	ipcRenderer.send('HOSTSTART', players);
 }
 

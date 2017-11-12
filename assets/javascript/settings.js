@@ -33,10 +33,20 @@ class settings {
 	}
 
 	initSounds(soundSettings) {
-		console.log('music is muted is ...' + !soundSettings.music)
 		this.sounds['music'].muted = !soundSettings.music;
 		this.sounds['bHover'].muted = !soundSettings.sfx;
 		this.sounds['bPressed'].muted = !soundSettings.sfx;
+		this.sounds['music'].currentTime = soundSettings.playTime;
+	}
+
+	disableSound() {
+		this.sounds['music'].muted = true;
+		this.sounds['bHover'].muted = true;
+		this.sounds['bPressed'].muted = true;
+	}
+
+	getPlayTime() {
+		return this.sounds['music'].currentTime;
 	}
 }
 

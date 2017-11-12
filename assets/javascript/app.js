@@ -1182,5 +1182,12 @@ function fadeOutLastLure(gameState, element) {
 // SETTINGS MENU
 var settings = document.getElementById('settings');
 settings.onclick = function() {
+	ipcRenderer.send('UPDATESOUND', sets.getPlayTime());
+	sets.disableSound();
 	sendEvent('SETTINGS');
-}
+};
+
+ipcRenderer.on('INITSOUNDS', function(event, soundSettings) {
+	console.log('INITSOUNDS, playtime: ' + soundSettings.playTime);
+	sets.initSounds(soundSettings);
+});

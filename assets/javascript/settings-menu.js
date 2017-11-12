@@ -39,6 +39,7 @@ settingsBack.onclick = function(e)
 mainMenu.onclick = function(e)
 {
 	e.preventDefault();
+	ipcRenderer.send('UPDATESOUND', sets.getPlayTime());
 	ipcRenderer.send('MAINMENU', {});
 };
 
@@ -55,6 +56,7 @@ exit.onclick = function(e)
 returnToGame.onclick = function(e)
 {
 	e.preventDefault();
+	ipcRenderer.send('UPDATESOUND', sets.getPlayTime());
 	ipcRenderer.send('SETTINGSCLOSE', {});
 };
 
