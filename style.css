@@ -170,6 +170,15 @@ body {
 	background-color: #CF6730;
 }
 
+/* Players card and lure in players section */
+.picture {
+	width: 55px;
+	height: 55px;
+	margin-left: 40px;
+	background-size: cover;
+	background-position: center;
+}
+
 .player .greybox{
 	background-color: grey;
 }

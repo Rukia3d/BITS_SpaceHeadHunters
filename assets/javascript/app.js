@@ -91,19 +91,14 @@ function renderPlayer(player, active, element, gamestate){
 				
 		if(element === player1){								
 			scorenumber.innerHTML = gamestate.players[0].score;
-
 		}else if(element === player2){					
-			scorenumber.innerHTML = gamestate.players[1].score;
-					
+			scorenumber.innerHTML = gamestate.players[1].score;					
 		}else if(element === player3){
 			scorenumber.innerHTML = gamestate.players[2].score;
-	
 		}else if (element === player4){
-			scorenumber.innerHTML = gamestate.players[3].score;
-			
+			scorenumber.innerHTML = gamestate.players[3].score;			
 		}
-		element.appendChild(activeScore);
-			 
+		element.appendChild(activeScore);			 
 	}
 	
 }
@@ -129,15 +124,30 @@ function renderActionArea(player, active, element, gamestate){
 
 				break;
 			case "PLACE":
-				var cardName = document.createElement("div");
-				cardName.innerHTML = player.currentCard;
-				activeArea.append(cardName);
+				//Display players card in players section before its positioned
+				var displayCard = document.createElement("div");
+				displayCard.className = "picture";
+				displayCard.className += " " + player.currentCard;
+				activeArea.append(displayCard);
+				
 				//show player where he can put his card
 				displayAvailableSpots(gamestate);
 				break;
 			case "LURE":
-				//Display available spots for lure
+				//Display players lure in players section before its positioned
+				var lure = document.createElement('div');
+				lure.className = "picture";
+				//Get players number
+				var playerNum = element.id;
+				playerNum = playerNum.substring(6);
+				playerNum = Number(playerNum);
+				
+				lure.id = "lure-p" + playerNum;		
+				activeArea.appendChild(lure);
+				
+				//show player where he can put his lure
 				displayAvailableLure(gamestate);
+				
 				break;
 			default:
 				//ships fly
@@ -145,7 +155,9 @@ function renderActionArea(player, active, element, gamestate){
 	} else {
 		//whaiting - watch
 	}
+	
 	element.appendChild(activeArea);
+	console.log(element.style);
 }
 
 
