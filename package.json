@@ -6,7 +6,8 @@
   "devDependencies": {
     "electron": "^1.7.6",
     "electron-packager": "^9.1.0",
-    "socket.io": "^2.0.4"
+    "socket.io": "^2.0.4",
+    "socket.io-client": "^2.0.4"
   },
   "scripts": {
     "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
