@@ -27,6 +27,9 @@ class settings {
 		{
 			this.sounds['bPressed'].muted = status;
 			this.sounds['bHover'].muted = status;
+			this.sounds['shipsfly'].muted = status;
+			this.sounds['positioned'].muted = status;
+			this.sounds['generate'].muted = status;
 		}
 		else
 			this.sounds[sound].muted = status;
@@ -36,6 +39,9 @@ class settings {
 		this.sounds['music'].muted = !soundSettings.music;
 		this.sounds['bHover'].muted = !soundSettings.sfx;
 		this.sounds['bPressed'].muted = !soundSettings.sfx;
+		this.sounds['shipsfly'].muted = !soundSettings.sfx;
+		this.sounds['positioned'].muted = !soundSettings.sfx;
+		this.sounds['generate'].muted = !soundSettings.sfx;
 		this.sounds['music'].currentTime = soundSettings.playTime;
 	}
 
@@ -43,6 +49,9 @@ class settings {
 		this.sounds['music'].muted = true;
 		this.sounds['bHover'].muted = true;
 		this.sounds['bPressed'].muted = true;
+		this.sounds['shipsfly'].muted = true;
+		this.sounds['positioned'].muted = true;
+		this.sounds['generate'].muted = true;
 	}
 
 	getPlayTime() {
