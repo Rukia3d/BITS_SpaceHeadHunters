@@ -343,7 +343,7 @@ class Board {
             }
         }
 
-        for(var k = 0; k < shipGroups.length; ++k) {
+        for(var k = shipGroups.length - 1; k >= 0; --k) {
 
             console.log(`\n\n==================\nShip Group ${k}\n==================`);
             console.log(`Location: ( ${shipGroups[k].x}, ${shipGroups[k].y} )`);
@@ -471,9 +471,19 @@ class Board {
                 }
 
                 // if we have cruiser lures
-                if(cruiserLures.length > 0 && shipGroups[k].num % cruiserLures.length == 0) {
+                if(cruiserLures.length > 0) {
 
-                    numShipsPerLure = shipGroups[k].num / cruiserLures.length;
+                    if(shipGroups[k].num % cruiserLures.length == 0)
+                    {
+                        numShipsPerLure = shipGroups[k].num / cruiserLures.length;
+                        console.log("evenly dicisible " + numShipsPerLure);
+                    }
+                    
+                    else {
+                        numShipsPerLure = (shipGroups[k].num - 1) / cruiserLures.length;
+                        console.log("NOT evenly dicisible " + numShipsPerLure);
+                        newShipGroups.push({ "num" : 1, "x" : shipGroups[k].x,  "y" : shipGroups[k].y, "ids" : shipGroups[k].ids.splice(0, 1) });
+                    }
 
                     for(var v = 0; v < cruiserLures.length; ++v) {
 
@@ -498,9 +508,18 @@ class Board {
                 }
 
                 // if just normal lures
-                else if(cruiserLures.length == 0 && shipGroups[k].num % axisLures.length == 0) {
+                else if(cruiserLures.length == 0) {
 
-                    numShipsPerLure = shipGroups[k].num / axisLures.length;
+                    if(shipGroups[k].num % axisLures.length == 0)
+                    {
+                        numShipsPerLure = shipGroups[k].num / axisLures.length;
+                        console.log("evenly dicisible " + numShipsPerLure);
+                    }
+                    else {
+                        numShipsPerLure = (shipGroups[k].num - 1) / axisLures.length;
+                        console.log("NOT evenly dicisible " + numShipsPerLure);
+                        newShipGroups.push({ "num" : 1, "x" : shipGroups[k].x,  "y" : shipGroups[k].y, "ids" : shipGroups[k].ids.splice(0, 1) });
+                    }
 
                     for(var v = 0; v < axisLures.length; ++v) {
 
@@ -534,7 +553,7 @@ class Board {
                 }
                 // keep the ships were they were i.e. they weren't evenly divisible
                 else {
-                    newShipGroups.push({ "num" : shipGroups[k].num, "x" : shipGroups[k].x,  "y" : shipGroups[k].y, "ids" : shipGroups[k].ids });
+                    //newShipGroups.push({ "num" : shipGroups[k].num, "x" : shipGroups[k].x,  "y" : shipGroups[k].y, "ids" : shipGroups[k].ids });
                 }
             }
             // there were no valid lures, so don't move the ships
