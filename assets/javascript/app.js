@@ -205,6 +205,9 @@ function drawShips(gameState, x, y, cell){
 	var ships = findByXY(gameState.board.ships, x, y);
 	
 	// the wrapper for the ships on the tile
+	var bgTint = document.createElement('div');
+	bgTint.className = 'bg-tint';
+
 	var shipWrap = document.createElement('div');
 	shipWrap.className = 'ship-wrap';
 	shipWrap.dataset.shipx = x; // required for animation destination
@@ -231,7 +234,8 @@ function drawShips(gameState, x, y, cell){
 		}		
 	}
 	// append the wrapper for all ships
-	cell.appendChild(shipWrap);
+	cell.appendChild(bgTint);
+	bgTint.appendChild(shipWrap);
 }
 
 function drawLure(gameState, x, y, cell){
