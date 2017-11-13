@@ -151,7 +151,7 @@ class GameState {
 				this.board.scatter();
 				this.resetLures();
 
-				if(this.isGameOver())
+				if(this.isGameOver()) 
 					this.phase = "END"
 				else {
 					this.phase = "DRAW";
@@ -188,8 +188,7 @@ class GameState {
 
 	// game is over when the deck is depleted
 	isGameOver() {
-
-		if(this.deck.length == 0) 
+		if(this.deck.cards.length == 0) 
 			return true;
 
 		return false;

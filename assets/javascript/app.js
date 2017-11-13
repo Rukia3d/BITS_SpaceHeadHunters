@@ -368,6 +368,12 @@ ipcRenderer.on('GSO', (event, arg) => {
 
 	console.log(event, arg) // helper, prints objects to use
 
+	if(arg.phase == 'END') {
+		ipcRenderer.send('UPDATESOUND', sets.getPlayTime());
+		sets.disableSound();
+		sendEvent('GAMEOVER');
+	}
+
 	// animate the stages that require animation
 	if(previousGameState && (previousGameState.phase == "SHIPSFLY" || previousGameState.phase == "SHIPSFLEE")) 
 	{

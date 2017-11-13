@@ -10,6 +10,7 @@ var ipc = electron.ipcMain;
 
 let appWindow;
 let settingsWindow;
+let gameOverWindow;
 
 let client = new Client();
 
@@ -46,6 +47,29 @@ app.on("window-all-closed", app.quit);
 ipc.on('EXIT', function(event, {}) {
 	app.quit();
 });
+
+ipc.on('GAMEOVER', function() {
+	gameOverWindow = new BrowserWindow({
+		parent: appWindow,
+		backgroundColor: '#006282',
+		modal: true,
+		show: false,
+		frame: false,
+		resizable: false,
+		width: 371,
+		height: 446
+	});
+
+	gameOverWindow.loadURL("file://" + __dirname + "/gameover.html");
+
+	gameOverWindow.once('ready-to-show', function() {
+		gameOverWindow.show();
+		gameOverWindow.webContents.send('INITSOUNDS', settings.sound);
+		gameOverWindow.webContents.send('GAMEOVERDATA', client.getGameState());
+	});
+
+	gameOverWindow.on('window-should-close', gameOverWindow.close);
+})
 
 ipc.on('SETTINGS', function() {
 	settingsWindow = new BrowserWindow({
@@ -123,14 +147,22 @@ ipc.on('PLAYSOUND', function(event, sound) {
 		event.sender.send('PLAYSOUND', sound);
 });
 
-ipc.on('MAINMENU', function() {
+ipc.on('MAINMENU', function(event, data) {
 
 	appWindow.loadURL("file://" + __dirname + "/menu.html");
 
 	appWindow.webContents.once('did-finish-load', function() {
 		appWindow.webContents.send('INITSOUNDS', settings.sound);
 	});
-	settingsWindow.close();
+
+	if(settingsWindow) {
+		settingsWindow.close();
+		settingsWindow = null;
+	}
+	if(gameOverWindow) {
+		gameOverWindow.close();
+		gameOverWindow = null;
+	}
 });
 
 
