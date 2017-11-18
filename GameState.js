@@ -16,6 +16,7 @@ class GameState {
 		this.players  = new Array();
 		this.phase    = "DRAW";
 		this.player   = 0;
+		this.tail     = 0;
 		this.addPlayers(numPlayers);
 		
 	}
@@ -131,12 +132,17 @@ class GameState {
 				this.phase = "LURE";
 				break;
 			case "LURE":
-				if(this.player == this.players.length - 1) {
+				//if(this.player == this.players.length - 1) {
+				if (this.player == this.tail) {
 					this.phase = "SHIPSFLY";
+					this.tail = (this.tail + 1) % this.players.length;
+					this.player = (this.tail + 1) % this.players.length;
 				}		
 				else {
 					this.phase = "DRAW";
-					this.player++;
+					this.player = (this.player + 1) % this.players.length;
+					console.log (this.player);
+					//this.player++;
 				}
 				break;
 			case "SHIPSFLY":
@@ -155,7 +161,7 @@ class GameState {
 					this.phase = "END"
 				else {
 					this.phase = "DRAW";
-					this.player = 0;
+					//this.player = 0;
 				}
 
 				break;
@@ -175,6 +181,8 @@ class GameState {
 		
 		for(var i = 0; i < numPlayers; ++i)
 			this.players.push({ "currentCard" : null, "lure" : null, "score" : 0 });
+
+		this.tail = numPlayers - 1;
 		
 	}
 
