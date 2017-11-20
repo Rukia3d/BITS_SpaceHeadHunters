@@ -1,3 +1,14 @@
+/*	settings-menu.js
+ *	RMIT CPT111 - Building IT Systems - SP3 2017
+ *	Space Headhunters
+ *	
+ *	Proudly built by:
+ *		- Inga Pflaumer      s3385215
+ *		- Ashley Hepplewhite s3675296
+ *		- Kevin Murphy       s3407899
+ *		- Joshua Phillips    s3655612
+ */
+
 const {ipcRenderer} = require('electron');
 const remote = require('electron').remote;
 var settings = require('./assets/javascript/settings');

@@ -1,3 +1,14 @@
+/*	main-menu.js
+ *	RMIT CPT111 - Building IT Systems - SP3 2017
+ *	Space Headhunters
+ *	
+ *	Proudly built by:
+ *		- Inga Pflaumer      s3385215
+ *		- Ashley Hepplewhite s3675296
+ *		- Kevin Murphy       s3407899
+ *		- Joshua Phillips    s3655612
+ */
+
 const {ipcRenderer} = require('electron');
 var settings = require('./assets/javascript/settings');
 var sets = new settings();
@@ -181,26 +192,6 @@ ipcRenderer.on('playerUpdate', (event, arg) => {
 	playerCount.innerHTML = arg;
 });
 
-ipcRenderer.on('GSO', (event, arg) => {
-	/*
-	console.log(event, arg) // helper, prints objects to use
-	renderBoard(arg); // render the board from gamestate
-	renderPlayers(arg); // render both players from gamestate
-  
-	switch (arg.phase) {
-  
-	  case "SHIPSFLY":
-	  case "SCORING":
-	  case "SHIPSFLEE":
-		  sendEvent(arg.phase, arg);
-		  break;
-  
-	}
-	*/
-
-	console.log("GAME START WHAT");
-  
-  });
 //-----------------------------------------------------------------------------
 // SOUNDS
 //-----------------------------------------------------------------------------

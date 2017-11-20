@@ -1,5 +1,20 @@
-class Board {
+/*	Board.js
+ *	RMIT CPT111 - Building IT Systems - SP3 2017
+ *	Space Headhunters
+ *	
+ *	Proudly built by:
+ *		- Inga Pflaumer      s3385215
+ *		- Ashley Hepplewhite s3675296
+ *		- Kevin Murphy       s3407899
+ *		- Joshua Phillips    s3655612
+ */
 
+class Board {
+/*  Object representing the board, encapsulating the tile and ship objects.
+ *  Presents public methods for manipulating the objects on the board, and 
+ *  business logic for ensuring legal player moves and performing correct ship 
+ *  movements at the end of the placement phases.
+ */
 
     constructor(deck) {
 
@@ -11,18 +26,22 @@ class Board {
 
     }
     
-    /* PUBLIC INTERFACE */
+    //-------------------------------------------------------------------------
+    // PUBLIC INTERFACES
+    //-------------------------------------------------------------------------
     placeCard(crd, x, y) {
 
-        // if tile exists, return false
+        // first, check if the location already has tile...
         if (this.getTile(x, y) !== null)
             return false;
 
+        // ...if it doesn't, check location edges for adjacent tiles
         for (let j = 0; j < this.tiles.length; ++j) {
 
             if((Math.abs(this.tiles[j].x - x) === 1 && this.tiles[j].y === y) ||
                (Math.abs(this.tiles[j].y - y) === 1 && this.tiles[j].x === x)) {
-                
+                    
+                    // found an adjacent tile, placement is legal yay
                     this.tiles.push({"type": crd, "x": x, "y": y});
                     this.placeShip(x, y);
 
@@ -32,36 +51,49 @@ class Board {
 
         }
 
+        // no adjacent tile found, placement illegal
         return false;
     }
     
     placeLure(player, x, y) {
     
-        // must have a card at tile
-        // card must not be pub
-        // card must have no ships
+        /* legal lure placement must meet the following criteria:
+         *  - must have a card at tile
+         *  - card must not be pub
+         *  - card must have no ships
+         */
+
+        // note order of terms is important
+
         if (this.getTile(x, y) && this.getTile(x, y).type !== "pub" &&
             this.numShipsOnTile(x, y) === 0) { 
 
+            // lure placement is legal
             player.lure = {"x": x, "y": y};
             return true;
 
         }
 
+        // lure placement is illegal
         return false;
     
     }
     
     placeShip(x, y) {
         
+        // for a given coord, scan tile array to ensure tile exists at that 
+        // location and that potential location is a gate
         this.tiles.forEach(function(i) {
 
             if (i.x === x && i.y === y) {
                 
                 if (i.type.substring(0, 4) === "gate") {
         
+                    // cool, coord is valid. now lets grab the 
+                    // number of ships for this gate...
                     var numShips = parseInt(i.type.substring(4));
         
+                    // ...and add these ships to the board ship array
                     for(var j = 0; j < numShips; ++j) {
         
                         this.ships.push({ "x" : i.x, "y" : i.y, "id" : this.idCount });
@@ -73,44 +105,56 @@ class Board {
             }
     
         }, this);
+
+        // ships must be sorted for animations to work correctly
         this.sortShips();        
     }
 
-    // animations require the pub ships to be first ships to be moved.
-    // ships can move both from and to a pub tile during the animation phase.
-    // Because ship position on tile is determined by the new gamestate object
-    // if the pub ships move last - then any ships going TO the pub tile will
-    // move to position 0, and position 1 etc, temporarily overlaying
-    // the ships that will shortly move FROM the pub tile
-    // Quickest solution is to always move ships FROM the pub tile first
-    // and the quickest way to do that is to ensure the sort order of the array so that
-    // the pub ships appear as the first elements.
-
     sortShips() {
+    /*  animations require the pub ships to be first ships to be moved.
+     *  ships can move both from and to a pub tile during the animation phase.
+     *  Because ship position on tile is determined by the new gamestate object
+     *  if the pub ships move last - then any ships going TO the pub tile will
+     *  move to position 0, and position 1 etc, temporarily overlaying
+     *  the ships that will shortly move FROM the pub tile
+     *  Quickest solution is to always move ships FROM the pub tile first
+     *  and the quickest way to do that is to ensure the sort order of the array so that
+     *  the pub ships appear as the first elements.
+     */
 
+        // declare temp ship arrays
         var otherShips = new Array();
         var pubShips = new Array();
 
+        // iterate through all ships
         for(var i = 0; i < this.ships.length; ++i)
         {
             var tile = this.getTile(this.ships[i].x, this.ships[i].y);
 
+            // check if ships located on a pub tile 
             if(tile.type == 'pub') {
+
+                // it is, add it to pub array
                 pubShips.push(this.ships[i]);
             }
             else {
+                // it isn't, add it to non-pub array
                 otherShips.push(this.ships[i]);
             }
         }
 
+        // join temp arrays together, pub ships are now first
         this.ships = pubShips.concat(otherShips);
     }
 
     getTiles() {
+    // getter method
         return this.tiles;
     }
 
     getTile(x, y) {
+    // getter method, return the tile at the specified coord
+    // or null if no tile at coord
 
         for (let j = 0; j < this.tiles.length; ++j) {
 
@@ -124,10 +168,9 @@ class Board {
 
     }
 
-    /* PRIVATE MEMBERS */
-    // obvious
     numShipsOnTile(x, y) {
-    
+    //  getter method. given a tile coord, return the number of ships on it
+
         var shipCount = 0;
 
         this.ships.forEach(function(i) {
@@ -142,7 +185,9 @@ class Board {
     }
 
     getShipIdsOnTile(x, y) {
-
+    /*  given a tile coord, check all ships and record the id of the players
+     *  who placed them into an array
+     */
         var ids = new Array();
 
         this.ships.forEach(function(i) {
@@ -152,12 +197,15 @@ class Board {
 
         }, this);
         
+        // don't know what this does...
         ids.reverse();
 
         return ids;
     }
 
     scatter() {
+    /* performs the scattering of the ships when a tile contains too many ships
+     */
         
         // all ships on one tile = shipGroup
         var shipGroups = new Array();
@@ -289,24 +337,32 @@ class Board {
         }
     }
 
-    // takes ships off the tile
-    // TODO rewrote this function, requires testing...
     removeShipsFromTile(x, y) {
+    /* given a tile coord, remove all ships from tile
+     */
             
         console.log(`removing all ships from ( ${x}, ${y} )`);
 
+        // create temp array
         let newShips = new Array();
 
+        // find ships at coord
         this.ships.forEach(function(i) {
             
             if (i.x == x && i.y == y)
-                ;// continue
+                // if matching ship is found, don't add to new array
+                ;
             else
+                // add all others
                 newShips.push(i);
 
         }, this);
 
+        // we now have a temp array that excludes the ships at the given coord
+        // so replace the board object's ship array with the temp array
         this.ships = newShips;
+
+        // ships must be sorted for animations to work correctly
         this.sortShips();
     }
 
@@ -576,8 +632,10 @@ class Board {
         this.sortShips();
     }
 
-    // check from x1 to x2 for pubs
     getPubInPathX(xStart, xEnd, y) {
+    // check from xStart coord to xEnd coord for pub tiles
+    // return coord if found, null if not
+
         console.log(`Checking pubs in X axis...`);
         if(xStart > xEnd) {
 
@@ -607,8 +665,10 @@ class Board {
         return null;
     }
 
-    // check from y1 to y2 for pubs
     getPubInPathY(yStart, yEnd, x) {
+    // check from yStart coord to yEnd coord for pub tiles
+    // return coord if found, null if not
+
         console.log(`Checking pubs in Y axis...`);
         if(yStart > yEnd) {
 
@@ -638,8 +698,9 @@ class Board {
         return null;
     }
 
-    // check from x1 to x2 for gaps
     checkShipPathX(xStart, xEnd, y) {
+    // check from xStart coord to xEnd coord for "gaps"
+
         console.log(`Checking path in X axis...`);
         if(xStart > xEnd) {
 
@@ -667,6 +728,8 @@ class Board {
 
     // check from y1 to y2 for gaps
     checkShipPathY(yStart, yEnd, x) {
+    // check from yStart coord to yEnd coord for "gaps"
+
         console.log(`Checking path in Y axis...`);
         if(yStart > yEnd) {
 
@@ -693,8 +756,8 @@ class Board {
     }
 
     initBoard(deck) {
-
-        // prime the board, so placeCard() logic works
+        // prime the board on startup, so placeCard() logic works
+        // tiles locations in accordance with the spec
 
         this.tiles.push({ "type": deck.drawCard().type, "x":4, "y": 2 });
         this.tiles.push({ "type": deck.drawCard().type, "x":3, "y": 3 });
@@ -709,6 +772,7 @@ class Board {
     }
 
     initShips() {
+        // prime the ships array after initBoard()
 
         this.ships.length = 0;
 
