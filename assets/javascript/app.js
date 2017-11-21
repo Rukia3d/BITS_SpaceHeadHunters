@@ -63,10 +63,10 @@ function renderPlayer(player, active, element, gamestate){
 	}else{
 		renderPlayerName();
 		renderAvatar();
-		renderStatusLine()
+		renderStatusLine(element, gamestate);
 		renderActiveScore();	
 		renderActionArea(player, active, element, gamestate);
-		}
+	}
 
 	//Render players name
 	function renderPlayerName(){
@@ -84,9 +84,17 @@ function renderPlayer(player, active, element, gamestate){
 	}
 
 	//render status line
-	function renderStatusLine(){
+	function renderStatusLine(element, gamestate){
 		var statusLine = document.createElement("div");
 		statusLine.className = "statusline";
+		var status;
+
+		if(element.id == "player"+(gamestate.player+1)){
+			status = document.createTextNode("Active Player");
+		} else {
+			status = document.createTextNode("Waiting");
+		}
+		statusLine.appendChild(status);
 		element.appendChild(statusLine);
 	}
 
@@ -116,6 +124,7 @@ function renderPlayer(player, active, element, gamestate){
 
 function renderActionArea(player, active, element, gamestate){
 	var activeArea = document.createElement("div");
+	var footer = document.getElementById("footer");
 	activeArea.className = "actionarea";
 	if(active){
 		switch(gamestate.phase){
@@ -166,10 +175,29 @@ function renderActionArea(player, active, element, gamestate){
 	} else {
 		//whaiting - watch
 	}
-	
+	renderFooter(gamestate, footer);
 	element.appendChild(activeArea);
 }
 
+// Render footer to let players know what to do
+function renderFooter(gamestate, footer){
+	footer.innerHTML = "";
+	var gameInfo;
+	switch(gamestate.phase){
+			case "DRAW":
+				gameInfo = "Active player draws a card";
+				break;
+			case "PLACE":
+				gameInfo = "Active player positions a card";
+				break;
+			case "LURE":	
+				gameInfo = "Active player positions a lure";		
+				break;
+			default:
+				gameInfo = "Ships fly";
+	}
+	footer.innerHTML = "<div style='padding: 0.5em; text-align: left;'>"+gameInfo+"</div>";
+}
 
 function sendEvent(name, arg){
 	console.log("Sending event ", name, arg);

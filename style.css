@@ -67,9 +67,11 @@ body {
 
 /* FOOTER STYLES */
 #footer{
-	/* background-color: red; */
 	flex: 0 1 75px;
+	background-color: black;
 }
+
+
 
 
 /* THE TABLE */
